@@ -1,0 +1,180 @@
+$backgroundColour: #121212;
+$modalBackgroundColour: #323232;
+$buttonBackgroundColour: #1f1a1f;
+$textColour: #f1f1f1;
+
+* {
+  padding: 0px;
+  margin: 0px;
+  font-family: sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $backgroundColour;
+  color: $textColour;
+
+  &.admin {
+    display: flex;
+    align-items: stretch;
+  }
+}
+
+.map {
+  position: absolute;
+  top: 0;
+  background: $backgroundColour;
+  color: $textColour;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in;
+  z-index: 100;
+
+  img {
+    width: 95vw;
+    padding: 2.5vh 2.5vw;
+    max-height: 95vh;
+  }
+
+  &.showing {
+    transform: translateY(0);
+
+    .map-toggle {
+      bottom: +46px;
+    }
+  }
+}
+
+.map-toggle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  a {
+    position: relative;
+    bottom: -46px;
+    flex: 1 1 0;
+    padding: 12px;
+    background: $buttonBackgroundColour;
+    color: $textColour;
+    text-decoration: none;
+  }
+}
+
+.chat {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  &.admin {
+    position: static !important;
+    flex: 0.5 1 0;
+  }
+
+  .messages {
+    position: relative;
+    flex: 1 1 0px;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    line-break: anywhere;
+    background: $modalBackgroundColour;
+
+    .chat-message-text {
+      flex: 1 1 0px;
+      padding: 6px;
+      margin: 6px 0;
+    }
+
+    .chat-message-image {
+      flex: 1 1 0px;
+      padding: 6px;
+      margin: 6px 10px;
+      max-height: 100px;
+      max-width: 100vw;
+      align-self: center;
+    }
+
+    .chat-message-log {
+      color: darken($color: $textColour, $amount: 50);
+      font-style: italic;
+    }
+  }
+
+  .message-box {
+    position: relative;
+    flex: 0 1 0px;
+    padding: 6px;
+    margin-top: 12px;
+    display: flex;
+    align-items: stretch;
+
+    .message-box-text {
+      padding: 6px;
+      border-radius: 6px;
+      flex: 1 1 0px;
+    }
+
+    .message-box-send {
+      padding: 6px;
+      border-radius: 6px;
+      background: $modalBackgroundColour;
+      text-decoration: none;
+      color: $textColour;
+    }
+
+    .placeholder-message {
+      padding: 6px;
+      border-radius: 6px;
+    }
+  }
+}
+
+.image-chat {
+  flex: 1 1 0;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+
+  .message-image-box, .map-image-box {
+    position: relative;
+    width: 200px;
+    height: 200px;
+
+    .message-image-box-image, .map-image-box-image{
+      width: 100%;
+      height: 100%;
+    }
+
+    .message-image-box-send, .map-image-box-send {
+      border-radius: 6px;
+      color: $textColour;
+      background: $buttonBackgroundColour;
+      position: absolute;
+      bottom: 20px;
+      p{
+        padding: 6px;
+      }
+    }
+  }
+}

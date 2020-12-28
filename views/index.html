@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{campaignName}}</title>
+    <link rel="stylesheet" href="/public/styles/master.css" />
+  </head>
+  <body>
+    <div class="content">
+      <div class="map">
+        <div class="map-toggle">
+          <a href="#" onclick="return false;">Open Map</a>
+        </div>
+        <img src="/public/assets/map/OoWsO_east.png" alt="map" />
+      </div>
+      <div class="chat">
+        <div class="messages"></div>
+        <div class="message-box">
+          <p class="placeholder-message">
+            Messages from the Dungeon Master come through here
+          </p>
+        </div>
+      </div>
+      <div class="modal"></div>
+      <script src="/public/javascript/socket.io.js"></script>
+      <script src="/public/javascript/feature-util.js"></script>
+      <script src="/public/javascript/feature-map.js"></script>
+      <script src="/public/javascript/feature-chat.js"></script>
+    </div>
+  </body>
+</html>

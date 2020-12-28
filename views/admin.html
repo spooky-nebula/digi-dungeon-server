@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{campaignName}}</title>
+    <link rel="stylesheet" href="/public/styles/master.css" />
+  </head>
+  <body>
+    <div class="content admin">
+      <div class="chat admin">
+        <div class="messages"></div>
+        <div class="message-box">
+          <input class="message-box-text" type="text" name="message-text" />
+          <a href="#" class="message-box-send" onclick="return false;">send</a>
+        </div>
+      </div>
+      <div class="image-chat">
+        {% for prop in props %}
+        <div class="message-image-box" data-path="{{prop}}">
+          <a class="message-image-box-send" href="#" onclick="return false;">
+            <p>send {{prop}}</p>
+          </a>
+          <img
+            class="message-image-box-image"
+            src="/public/assets/props/{{prop}}"
+            alt=""
+          />
+        </div>
+        {% else %}
+        <p>No props are loaded</p>
+        {% endfor %}
+      </div>
+      <div class="image-chat">
+        {% for map in maps %}
+        <div class="map-image-box" data-path="{{map}}">
+          <a class="map-image-box-send" href="#" onclick="return false;">
+            <p>change to {{map}}</p>
+          </a>
+          <img
+            class="map-image-box-image"
+            src="/public/assets/map/{{map}}"
+            alt=""
+          />
+        </div>
+        {% else %}
+        <p>No maps are loaded</p>
+        {% endfor %}
+      </div>
+      <script src="/public/javascript/socket.io.js"></script>
+      <script src="/public/javascript/feature-util.js"></script>
+      <script src="/public/javascript/feature-chat.js"></script>
+      <script src="/public/javascript/feature-admin.js"></script>
+    </div>
+  </body>
+</html>
