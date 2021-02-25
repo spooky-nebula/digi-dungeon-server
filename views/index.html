@@ -3,30 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{campaignName}}</title>
+    <title>Digi Dungeon</title>
     <link rel="stylesheet" href="/public/styles/master.css" />
   </head>
   <body>
     <div class="content">
-      <div class="map">
-        <div class="map-toggle">
-          <a href="#" onclick="return false;">Open Map</a>
-        </div>
-        <img src="/public/assets/map/OoWsO_east.png" alt="map" />
+      <div class="game-log">
+        <div class="messages"></div>
+        <div class="message-box"></div>
       </div>
-      <div class="chat">
-      <div class="messages"></div>
-      <div class="message-box">
-        <p class="placeholder-message">
-          Messages from the Dungeon Master come through here
-        </p>
+      <div class="toolbar">
+        <a class="tool" href="#" onclick="return false;">Selector</a>
+        <a class="tool" href="#" onclick="return false;">Panner</a>
+        <a class="tool" href="#" onclick="return false;">Brushie</a>
+        <a class="tool" href="#" onclick="return false;">The Ruller</a>
       </div>
+      <div class="party-list"></div>
+      <canvas class="map"></canvas>
     </div>
-    <div class="modal"></div>
-      <script src="/public/javascript/socket.io.js"></script>
-      <script src="/public/javascript/feature-util.js"></script>
-      <script src="/public/javascript/feature-map.js"></script>
-      <script src="/public/javascript/feature-chat.js"></script>
+    <div class="templates" hidden="hidden">
+      <div id="party-item-template">
+        <div class="party-item">
+          <div class="party-item-portrait"></div>
+          <div class="party-item-hp">10/10</div>
+          <div class="party-item-ac">10</div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

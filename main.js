@@ -31,8 +31,8 @@ nunjucks.configure('views', {
 });
 app.set('view engine', 'html');
 
-// Tell the server what port it should use. 80 is for testing purposes
-const PORT = parseInt(process.env.PORT) || 80;
+// Tell the server what port it should use. 8080 is for testing purposes
+const PORT = parseInt(process.env.PORT) || 8080;
 
 // Set up the parser for requests that are json type
 app.use(require('body-parser').json('application/json'));
