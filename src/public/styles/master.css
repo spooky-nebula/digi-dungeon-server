@@ -1,0 +1,764 @@
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Bold-Italic.woff2") format("woff2"), url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Bold-Italic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Bold.woff2") format("woff2"), url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-ExtraBold-Italic.woff2") format("woff2"), url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-ExtraBold-Italic.woff") format("woff");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-ExtraBold.woff2") format("woff2"), url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-ExtraBold.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Italic.woff2") format("woff2"), url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Medium-Italic.woff2") format("woff2"), url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Medium-Italic.woff") format("woff");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Medium.woff2") format("woff2"), url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2") format("woff2"), url("https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  padding: 0px;
+  margin: 0px;
+  font-family: sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.overlay .note {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #c1c1c1;
+  color: #121212;
+  padding: 4px;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+
+.overlay .hidden {
+  visibility: hidden;
+}
+
+.menu-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.menu-overlay .roll-menu {
+  position: absolute;
+  pointer-events: auto;
+  background: #323232;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 150px;
+  height: 200px;
+  -webkit-box-shadow: inset 0 0 2px #f1a2a2;
+          box-shadow: inset 0 0 2px #f1a2a2;
+}
+
+.menu-overlay .roll-menu .roll-type-selector {
+  -webkit-box-flex: 3;
+      -ms-flex: 3 1 0px;
+          flex: 3 1 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.menu-overlay .roll-menu .roll-type-selector a {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 50px;
+          flex: 1 1 50px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  color: #c1c1c1;
+}
+
+.menu-overlay .roll-menu .roll-type-selector a.selected {
+  color: #f1f1f1;
+}
+
+.menu-overlay .roll-menu .roll-details-selector {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+}
+
+.menu-overlay .roll-menu .roll-details-selector p {
+  font-size: 22px;
+}
+
+.menu-overlay .roll-menu .roll-details-selector input {
+  border: none;
+  border-bottom: dashed #c1c1c1 2px;
+  background: none;
+  color: #f1f1f1;
+  -moz-appearance: textfield;
+  text-align: center;
+  font-size: 22px;
+}
+
+.menu-overlay .roll-menu .roll-details-selector input::-webkit-outer-spin-button, .menu-overlay .roll-menu .roll-details-selector input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.menu-overlay .roll-menu input,
+.menu-overlay .roll-menu p {
+  display: inline;
+}
+
+.menu-overlay .roll-menu input {
+  width: 22px;
+}
+
+.menu-overlay .roll-menu .roll-roll-roll {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 0px;
+          flex: 0 1 0;
+  padding: 4px;
+  margin: 2px;
+  border: solid 1px #e1e1e1;
+  color: #f1f1f1;
+  -webkit-transform: translateY(0px);
+          transform: translateY(0px);
+}
+
+.menu-overlay .roll-menu .roll-roll-roll:hover {
+  -webkit-transform: translateY(-2px);
+          transform: translateY(-2px);
+}
+
+.menu-overlay .roll-menu .roll-roll-roll:active {
+  -webkit-transform: translateY(0px);
+          transform: translateY(0px);
+}
+
+.menu-overlay .hidden {
+  visibility: hidden;
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  color: #f1f1f1;
+  overflow: hidden;
+}
+
+.map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.game-log {
+  position: absolute;
+  right: 0;
+  top: 5%;
+  bottom: 5%;
+  z-index: 1;
+  -webkit-transform: translateX(0%);
+          transform: translateX(0%);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 300px;
+  -webkit-transition: -webkit-transform 0.3s ease-out;
+  transition: -webkit-transform 0.3s ease-out;
+  transition: transform 0.3s ease-out;
+  transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-box-pack: stretch;
+      -ms-flex-pack: stretch;
+          justify-content: stretch;
+}
+
+.game-log .top-left-border {
+  height: 40px;
+  background-image: url("/public/assets/ui/game_log_border.png");
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.game-log .bottom-left-border {
+  height: 40px;
+  background-image: url("/public/assets/ui/game_log_border.png");
+  background-position: center;
+  background-size: 100% 100%;
+  -webkit-transform: scaleY(-100%);
+          transform: scaleY(-100%);
+}
+
+.game-log .middle {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-box-pack: stretch;
+      -ms-flex-pack: stretch;
+          justify-content: stretch;
+  background-image: url("/public/assets/ui/game_log_background.png");
+  background-repeat: repeat-y;
+  background-size: contain;
+  background-position-y: top;
+}
+
+.game-log.hidden {
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
+}
+
+.game-log .game-log-toggle {
+  height: 20px;
+  width: 20px;
+  border-radius: 5px 0 0 5px;
+  background-color: #1f1a1f;
+  background-image: url("/public/assets/ui/dice_single.png");
+  background-position: center;
+  background-size: contain;
+  position: absolute;
+  left: -20px;
+  top: 40px;
+}
+
+.game-log .messages {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+  left: 0;
+  right: 0;
+  margin: 2.5%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.game-log .messages .chat-message-log {
+  text-align: center;
+  font-style: italic;
+  color: #c1c1c1;
+}
+
+.game-log .messages .chat-message-text {
+  padding: 2px;
+  margin: 2px;
+  word-wrap: break-word;
+}
+
+.game-log .messages .chat-message-text p {
+  display: inline;
+}
+
+.game-log .messages .chat-message-text .username {
+  font-weight: bold;
+}
+
+.game-log .messages .chat-message-text .username::after {
+  content: ':';
+  display: inline-block;
+}
+
+.game-log .message-box {
+  bottom: 0;
+  height: 50px;
+  left: 0;
+  right: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.game-log .message-box .message-box-text {
+  height: 24px;
+  background-color: #121212;
+  color: #f1f1f1;
+  border: none;
+  border-bottom: solid 1px #c1c1c1;
+}
+
+.game-log .message-box .message-box-roll {
+  height: 24px;
+  width: 24px;
+  margin: 6px;
+  background-image: url("/public/assets/ui/roll_button.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.game-log .message-box .message-box-send {
+  height: 24px;
+  width: 24px;
+  margin: 6px;
+  background-image: url("/public/assets/ui/send_button.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.game-log .roll-multiple,
+.game-log .roll-singular,
+.game-log .roll-lot {
+  padding: 6px;
+  margin: 6px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  position: relative;
+  border: solid #e1e1e1 1px;
+  /* &::after {
+      content: ' ';
+      width: 100%;
+      left: 0%;
+      right: 0%;
+      bottom: 0;
+      height: 2px;
+      border-radius: 50%;
+      position: absolute;
+      background: $textColour;
+    } */
+}
+
+.game-log .roll-multiple p,
+.game-log .roll-singular p,
+.game-log .roll-lot p {
+  font-family: 'JetBrains Mono';
+  font-weight: bold;
+}
+
+.game-log .roll-multiple .roll,
+.game-log .roll-multiple .roll-total,
+.game-log .roll-singular .roll,
+.game-log .roll-singular .roll-total,
+.game-log .roll-lot .roll,
+.game-log .roll-lot .roll-total {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.game-log .roll-multiple .result,
+.game-log .roll-singular .result,
+.game-log .roll-lot .result {
+  border: solid #f1f1f1 1px;
+}
+
+.game-log .roll-multiple .nat-20,
+.game-log .roll-singular .nat-20,
+.game-log .roll-lot .nat-20 {
+  color: greenyellow;
+}
+
+.game-log .roll-multiple .nat-1,
+.game-log .roll-singular .nat-1,
+.game-log .roll-lot .nat-1 {
+  color: red;
+}
+
+.game-log .roll-multiple .d20.roll,
+.game-log .roll-singular .d20.roll,
+.game-log .roll-lot .d20.roll {
+  background-image: url("/public/assets/ui/d20_single.png");
+}
+
+.game-log .roll-multiple .d100.roll,
+.game-log .roll-singular .d100.roll,
+.game-log .roll-lot .d100.roll {
+  background-image: url("/public/assets/ui/d100_single.png");
+}
+
+.game-log .roll-multiple .d12.roll,
+.game-log .roll-singular .d12.roll,
+.game-log .roll-lot .d12.roll {
+  background-image: url("/public/assets/ui/d12_single.png");
+}
+
+.game-log .roll-multiple .d10.roll,
+.game-log .roll-singular .d10.roll,
+.game-log .roll-lot .d10.roll {
+  background-image: url("/public/assets/ui/d10_single.png");
+}
+
+.game-log .roll-multiple .d8.roll,
+.game-log .roll-singular .d8.roll,
+.game-log .roll-lot .d8.roll {
+  background-image: url("/public/assets/ui/d8_single.png");
+}
+
+.game-log .roll-multiple .d6.roll,
+.game-log .roll-singular .d6.roll,
+.game-log .roll-lot .d6.roll {
+  background-image: url("/public/assets/ui/d6_single.png");
+}
+
+.game-log .roll-multiple .d4.roll,
+.game-log .roll-singular .d4.roll,
+.game-log .roll-lot .d4.roll {
+  background-image: url("/public/assets/ui/d4_single.png");
+}
+
+.game-log .roll-multiple .d20.roll-total,
+.game-log .roll-singular .d20.roll-total,
+.game-log .roll-lot .d20.roll-total {
+  background-image: url("/public/assets/ui/d20_lot.png");
+}
+
+.game-log .roll-multiple .d100.roll-total,
+.game-log .roll-singular .d100.roll-total,
+.game-log .roll-lot .d100.roll-total {
+  background-image: url("/public/assets/ui/d100_lot.png");
+}
+
+.game-log .roll-multiple .d12.roll-total,
+.game-log .roll-singular .d12.roll-total,
+.game-log .roll-lot .d12.roll-total {
+  background-image: url("/public/assets/ui/d12_lot.png");
+}
+
+.game-log .roll-multiple .d10.roll-total,
+.game-log .roll-singular .d10.roll-total,
+.game-log .roll-lot .d10.roll-total {
+  background-image: url("/public/assets/ui/d10_lot.png");
+}
+
+.game-log .roll-multiple .d8.roll-total,
+.game-log .roll-singular .d8.roll-total,
+.game-log .roll-lot .d8.roll-total {
+  background-image: url("/public/assets/ui/d8_lot.png");
+}
+
+.game-log .roll-multiple .d6.roll-total,
+.game-log .roll-singular .d6.roll-total,
+.game-log .roll-lot .d6.roll-total {
+  background-image: url("/public/assets/ui/d6_lot.png");
+}
+
+.game-log .roll-multiple .d4.roll-total,
+.game-log .roll-singular .d4.roll-total,
+.game-log .roll-lot .d4.roll-total {
+  background-image: url("/public/assets/ui/d4_lot.png");
+}
+
+.game-log .roll-multiple .roll-type,
+.game-log .roll-singular .roll-type,
+.game-log .roll-lot .roll-type {
+  text-align: center;
+  position: relative;
+}
+
+.game-log .roll-multiple .roll-type::after,
+.game-log .roll-singular .roll-type::after,
+.game-log .roll-lot .roll-type::after {
+  content: ' ';
+  width: 100%;
+  left: 0%;
+  right: 0%;
+  top: 50%;
+  height: 2px;
+  border-radius: 50%;
+  position: absolute;
+  background: -webkit-gradient(linear, left top, right top, from(#f1f1f1), color-stop(transparent), color-stop(transparent), to(#f1f1f1));
+  background: linear-gradient(to right, #f1f1f1, transparent, transparent, #f1f1f1);
+}
+
+.game-log .roll-multiple .modifier.positive::before,
+.game-log .roll-singular .modifier.positive::before,
+.game-log .roll-lot .modifier.positive::before {
+  content: '+';
+}
+
+.game-log .roll-multiple .modifier.negative::before,
+.game-log .roll-singular .modifier.negative::before,
+.game-log .roll-lot .modifier.negative::before {
+  content: '-';
+}
+
+.game-log .roll-singular > p {
+  padding: 6px;
+  display: block;
+}
+
+.game-log .roll-singular div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 60px;
+}
+
+.game-log .roll-singular div p {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+  text-align: center;
+  padding: 8px;
+}
+
+.game-log .roll-multiple p {
+  padding: 6px;
+  display: block;
+}
+
+.game-log .roll-multiple div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 80px;
+}
+
+.game-log .roll-multiple div .rolls {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  height: 80px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.game-log .roll-multiple div .rolls > p {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+  text-align: center;
+  padding: 6px;
+  font-size: 14px;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.game-log .roll-multiple div > p {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+  text-align: center;
+  padding: 8px;
+}
+
+.game-log .roll-lot p {
+  padding: 6px;
+  display: block;
+}
+
+.game-log .roll-lot div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 60px;
+}
+
+.game-log .roll-lot div p {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+  text-align: center;
+  padding: 8px;
+}
+
+.toolbar {
+  position: absolute;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  top: 0;
+  left: 30%;
+  right: 30%;
+  height: 28px;
+  background: #121212;
+  z-index: 1;
+}
+
+.toolbar .tool {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
+  padding: 12px;
+  margin: 8px;
+}
+
+.toolbar .tool .tool-button {
+  text-decoration: none;
+  color: #c1c1c1;
+}
+
+.toolbar .tool .tool-options {
+  position: absolute;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  visibility: hidden;
+}
+
+.toolbar .tool .tool-option {
+  width: 26px;
+  height: 26px;
+}
+
+.toolbar .tool .tool-option * {
+  width: 100%;
+  height: 100%;
+}
+
+.toolbar .tool.selected .tool-button {
+  color: #f1f1f1;
+}
+
+.toolbar .tool.selected .tool-options {
+  visibility: visible;
+}
+
+.party-list {
+  position: absolute;
+  left: 0;
+  top: 5%;
+  bottom: 5%;
+  width: 300px;
+  background: #121212;
+  z-index: 1;
+}
+/*# sourceMappingURL=master.css.map */
