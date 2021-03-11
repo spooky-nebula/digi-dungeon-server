@@ -4,6 +4,11 @@ canvasMap.backgroundLayer = [];
 canvasMap.tokenLayer = [];
 canvasMap.drawingLayer = [];
 
+canvasMap.camera2d = {
+  x: 0,
+  y: 0,
+};
+
 canvasMap.canvasElement = document.querySelector('canvas.map');
 canvasMap.canvasContext = document.querySelector('canvas.map').getContext('2d');
 
@@ -46,7 +51,7 @@ canvasMap.draw = function () {
     ctx.beginPath();
     // Add each point
     drawing.points.forEach((point) => {
-      ctx.lineTo(point.x, point.y);
+      ctx.lineTo(point.x + this.camera2d.x, point.y + this.camera2d.y);
     });
     // Finish the line and draw it
     ctx.stroke();
