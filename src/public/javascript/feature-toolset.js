@@ -32,11 +32,15 @@ toolset.forceUpdateToolbar = () => {
       .cloneNode(true);
     // Create the button element
     let toolButtonElement = toolElement.querySelector('.tool-button');
-    toolButtonElement.textContent = tool.name;
-    toolButtonElement.style.backgroundImage = 'url(' + tool.iconPath + ')';
+    toolButtonElement.querySelector('p').textContent = tool.name;
+    toolButtonElement.querySelector('img').src = tool.iconPath;
+    toolButtonElement.title = 'hotkey: "' + tool.hotKey + '"' || tool.name;
     toolButtonElement.dataset.index = index;
     toolButtonElement.addEventListener('mouseup', (event) => {
-      let i = parseInt(event.target.dataset.index);
+      console.log(event);
+      let i = parseInt(
+        event.target.parentElement.dataset.index || event.target.dataset.index
+      );
       toolset.switchTo(i);
     });
     // Add each options to the options bar of each tool
@@ -75,7 +79,7 @@ toolset.updateToolbar = () => {
   let toolElements = document.querySelectorAll('.toolbar .tool');
   toolElements[toolset.currentTool].classList.add('selected');
   document.querySelector('canvas.map').style.cursor =
-    'url(' + toolset.tools[toolset.currentTool].pointerPath + ')';
+    'url(' + toolset.tools[toolset.currentTool].pointerPath + '), auto';
   toolset.tools[toolset.currentTool].enabled = true;
   toolset.tools[toolset.previousTool].enabled = false;
 };

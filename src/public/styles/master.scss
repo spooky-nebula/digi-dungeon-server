@@ -146,7 +146,7 @@ a {
   left: 0;
   right: 0;
   bottom: 0;
-  background: white;
+  background: $textLogColour;
   color: $textColour;
   overflow: hidden;
 }
@@ -529,6 +529,19 @@ a {
     .tool-button {
       text-decoration: none;
       color: $textLogColour;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: row;
+
+      img {
+        display: inline-block;
+        height: 22px;
+        width: 22px;
+      }
+      p {
+        display: inline-block;
+      }
     }
     .tool-options {
       position: absolute;

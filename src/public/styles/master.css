@@ -228,7 +228,7 @@ a {
   left: 0;
   right: 0;
   bottom: 0;
-  background: white;
+  background: #c1c1c1;
   color: #f1f1f1;
   overflow: hidden;
 }
@@ -283,7 +283,7 @@ a {
   background-position: center;
   background-size: 100% 100%;
   -webkit-transform: scaleY(-1);
-  transform: scaleY(-100%);
+  transform: scaleY(-1);
   -webkit-filter: FlipV;
           filter: FlipV;
   -ms-filter: 'FlipV';
@@ -727,6 +727,29 @@ a {
 .toolbar .tool .tool-button {
   text-decoration: none;
   color: #c1c1c1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.toolbar .tool .tool-button img {
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+}
+
+.toolbar .tool .tool-button p {
+  display: inline-block;
 }
 
 .toolbar .tool .tool-options {

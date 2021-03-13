@@ -35,7 +35,7 @@ toolset.tools.forEach((tool, index) => {
 
 // Add the default hotkeys
 hotKeyListener.addHotKey(
-  new HotKey('r', () => {
+  new HotKey('d', () => {
     toggleRollMenu();
   })
 );

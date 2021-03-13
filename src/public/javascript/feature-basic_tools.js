@@ -4,9 +4,10 @@ let Selector = function () {
   this.pointerPath = '/public/assets/tools/selector_pointer.png';
   this.enable = false;
   this.updateRate = 3.3333;
+  this.hotKey = 's';
   this.init = () => {};
   this.update = () => {};
-  this.draw = () => {};
+  this.draw = (context2d, camera2d) => {};
 };
 
 let Panner = function () {
@@ -15,6 +16,7 @@ let Panner = function () {
   this.pointerPath = '/public/assets/tools/panner_pointer.png';
   this.enabled = false;
   this.updateRate = 3.3333;
+  this.hotKey = 'p';
   this.options = [
     {
       name: 'Inverted',
@@ -51,18 +53,7 @@ let Panner = function () {
       }
     }
   };
-  this.draw = (context2d) => {
-    context2d.fillText(
-      'x' +
-        canvasMap.camera2d.x +
-        ',y:' +
-        canvasMap.camera2d.y +
-        ',dragging:' +
-        this.dragging,
-      toolset.mouseState.x,
-      toolset.mouseState.y
-    );
-  };
+  this.draw = (context2d, camera2d) => {};
   this.mouseDown = (event) => {
     if (!this.enabled) {
       return;
@@ -122,7 +113,7 @@ let BrushieTool = function () {
       this.addPoint(toolset.mouseState.x, toolset.mouseState.y);
     }
   };
-  this.draw = (context2d) => {
+  this.draw = (context2d, camera2d) => {
     context2d.strokeStyle = this.tempLine.color;
     context2d.lineWidth = this.tempLine.width;
     context2d.beginPath();
@@ -214,9 +205,10 @@ let TheRuller = function () {
   this.pointerPath = '/public/assets/tools/theRuller_pointer.png';
   this.enabled = false;
   this.updateRate = 3.3333;
+  this.hotKey = 'r';
   this.init = () => {};
   this.update = () => {};
-  this.draw = () => {};
+  this.draw = (context2d, camera2d) => {};
 };
 
 toolset.tools.push(new Selector());
