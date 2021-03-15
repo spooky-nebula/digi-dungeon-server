@@ -4,7 +4,7 @@ let Selector = function () {
   this.pointerPath = '/public/assets/tools/selector_pointer.png';
   this.enable = false;
   this.updateRate = 3.3333;
-  this.hotKey = 's';
+  this.hotKey = [{ key: 's', type: 'switch' }];
   this.init = () => {};
   this.update = () => {
     if (this.dragging) {
@@ -49,7 +49,7 @@ let Panner = function () {
   this.pointerPath = '/public/assets/tools/panner_pointer.png';
   this.enabled = false;
   this.updateRate = 3.3333;
-  this.hotKey = 'p';
+  this.hotKey = [{ key: 'p', type: 'switch' }];
   this.options = [
     {
       name: 'Inverted',
@@ -175,7 +175,19 @@ let BrushieTool = function () {
       style: '.brushie-clear-drawings {background-color: white}',
     },
   ];
-  this.hotKey = 'b';
+  this.hotKey = [
+    { key: 'b', type: 'switch' },
+    {
+      key: 'z',
+      mod: 'Control',
+      type: 'modifier',
+      fun: () => {
+        if (canvasMap.drawingLayer.length > 0) {
+          socket.emit('drawing-undo', { user: 'user' });
+        }
+      },
+    },
+  ];
 
   this.init = () => {};
   this.update = () => {
@@ -285,7 +297,7 @@ let TheRuller = function () {
   this.pointerPath = '/public/assets/tools/theRuller_pointer.png';
   this.enabled = false;
   this.updateRate = 3.3333;
-  this.hotKey = 'r';
+  this.hotKey = [{ key: 'r', type: 'switch' }];
   this.init = () => {};
   this.update = () => {};
   this.draw = (context2d, camera2d) => {};

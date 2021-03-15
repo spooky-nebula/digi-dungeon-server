@@ -22,6 +22,10 @@ socket.on('request-shard-data-response', (data) => {
         canvasMap.clearDrawings(event.data.all);
         break;
 
+      case 'drawing-undo':
+        canvasMap.undoLast(event.data);
+        break;
+
       default:
         break;
     }

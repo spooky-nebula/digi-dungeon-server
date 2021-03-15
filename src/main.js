@@ -136,6 +136,11 @@ io.on('connection', (socket) => {
     io.to('universal').emit('drawing-clear-all', data);
   });
 
+  socket.on('drawing-undo', (data) => {
+    addEvent('drawing-undo', data);
+    io.to('universal').emit('drawing-undone', data);
+  });
+
   socket.on('disconnect', () => {
     console.log(socket.id + ' disconnected');
   });

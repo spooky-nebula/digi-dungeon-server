@@ -71,14 +71,14 @@ canvasMap.draw = () => {
   ctx.canvas.height = window.innerHeight;
   // Clear
   ctx.fillStyle = 'white';
+
+  // TODO: Draw Grid
   ctx.fillRect(
     0 + canvasMap.camera2d.x,
     0 + canvasMap.camera2d.y,
     canvasMap.grid.size.x,
     canvasMap.grid.size.y
   );
-
-  // TODO: Draw Grid
   for (let x = 0; x < canvasMap.grid.tileCount.x + 1; x++) {
     // Set style and width
     ctx.strokeStyle = '#f1f1f1';
@@ -146,6 +146,20 @@ canvasMap.draw = () => {
   toolset.tools.forEach((tool, index) => {
     tool.draw(ctx, canvasMap.camera2d);
   });
+  /* 
+  // DEBUG
+  ctx.font = 'italics 48px serif';
+  ctx.fillStyle = 'black';
+  ctx.fillText(
+    JSON.stringify(hotKeyListener.lastKeys),
+    canvasMap.camera2d.x,
+    canvasMap.camera2d.y
+  );
+  ctx.fillText(
+    JSON.stringify(hotKeyListener.modifier),
+    canvasMap.camera2d.x,
+    canvasMap.camera2d.y + 40
+  ); */
 };
 // UPDATE FUNCTION
 canvasMap.update = () => {};
@@ -195,12 +209,20 @@ canvasMap.clearDrawings = function (all) {
   }
 };
 
+canvasMap.undoLast = function (data) {
+  canvasMap.drawingLayer.pop();
+};
+
 socket.on('drawing-added', (data) => {
   canvasMap.addDrawing(data.finishedLine);
 });
 
 socket.on('drawing-clear-all', (data) => {
   canvasMap.clearDrawings(data.all);
+});
+
+socket.on('drawing-undone', (data) => {
+  canvasMap.undoLast(data);
 });
 
 // Start listening to resize events and draw canvas.
