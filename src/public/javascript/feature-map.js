@@ -34,7 +34,7 @@ canvasMap.init = () => {
   // Draw canvas border for the first time.
   canvasMap.resizeCanvas();
   // Resize the grid to the default size,
-  canvasMap.resizeGrid(640, 480, 16, 16);
+  canvasMap.resizeGrid(1024, 576, 32, 32);
   // Start the draw cycle
   setInterval(() => {
     canvasMap.draw();
@@ -189,8 +189,18 @@ canvasMap.addDrawing = function (drawingObject) {
   canvasMap.drawingLayer.push(drawingObject);
 };
 
+canvasMap.clearDrawings = function (all) {
+  if (all) {
+    canvasMap.drawingLayer = [];
+  }
+};
+
 socket.on('drawing-added', (data) => {
   canvasMap.addDrawing(data.finishedLine);
+});
+
+socket.on('drawing-clear-all', (data) => {
+  canvasMap.clearDrawings(data.all);
 });
 
 // Start listening to resize events and draw canvas.

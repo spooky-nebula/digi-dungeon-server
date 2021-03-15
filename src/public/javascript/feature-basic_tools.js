@@ -6,8 +6,41 @@ let Selector = function () {
   this.updateRate = 3.3333;
   this.hotKey = 's';
   this.init = () => {};
-  this.update = () => {};
+  this.update = () => {
+    if (this.dragging) {
+      // Check if the mouse has moved since last update
+      if (
+        toolset.mouseState.x == this.lastMouseState.x &&
+        toolset.mouseState.y == this.lastMouseState.y
+      ) {
+        return;
+      }
+      // Set the last known state to the newest one
+      this.lastMouseState.x = toolset.mouseState.x;
+      this.lastMouseState.y = toolset.mouseState.y;
+      // Calculate the vector of the drag
+      let vector = this.calculateMoveVector(
+        toolset.mouseState,
+        toolset.previousMouseState
+      );
+    }
+  };
   this.draw = (context2d, camera2d) => {};
+  this.mouseDown = (event) => {
+    if (!this.enabled) {
+      return;
+    }
+    this.updateDetails();
+    this.dragging = true;
+  };
+  this.mouseUp = (event) => {
+    if (!this.enabled) {
+      return;
+    }
+    this.dragging = false;
+  };
+
+  this.dragging = false;
 };
 
 let Panner = function () {
@@ -22,6 +55,8 @@ let Panner = function () {
       name: 'Inverted',
       html:
         '<input class="panner-inverted-picker" type="checkbox" value="inverted" checked title="inverted drag" alt="inverted drag">',
+      type: 'onClick',
+      style: '.panner-inverted-picker {width: 100%; height: 100%}',
     },
   ];
 
@@ -93,10 +128,51 @@ let BrushieTool = function () {
       name: 'Colour Picker',
       html:
         '<input class="brushie-colour-picker" type="color" value="#000000">',
+      type: 'picker',
+      style: '.brushie-colour-picker {width: 100%; height: 100%}',
     },
     {
-      name: 'Width Picker',
-      html: '<input class="brushie-width-picker" type="number" value="1">',
+      name: 'Width Picker 5 Small',
+      html:
+        '<a class="brushie-width-picker-small" href="#" onclick="return false;">',
+      type: 'onClick',
+      fun: () => {
+        this.tempLine.width = 5;
+      },
+      style:
+        '.brushie-width-picker-small {width: 30%; height: 30%; border-radius: 50%; border: 2px solid grey; margin: 35%; background-color: black}',
+    },
+    {
+      name: 'Width Picker 10 Medium',
+      html:
+        '<a class="brushie-width-picker-medium" href="#" onclick="return false;">',
+      type: 'onClick',
+      fun: () => {
+        this.tempLine.width = 10;
+      },
+      style:
+        '.brushie-width-picker-medium {width: 50%; height: 50%; border-radius: 50%; border: 2px solid grey; margin: 25%; background-color: black}',
+    },
+    {
+      name: 'Width Picker 15 Big',
+      html:
+        '<a class="brushie-width-picker-big" href="#" onclick="return false;">',
+      type: 'onClick',
+      fun: () => {
+        this.tempLine.width = 15;
+      },
+      style:
+        '.brushie-width-picker-big {width: 70%; height: 70%; border-radius: 50%; border: 2px solid grey; margin: 15%; background-color: black}',
+    },
+    {
+      name: 'Clear Drawing',
+      html:
+        '<a class="brushie-clear-drawings" href="#" onclick="return false;">Clear Drawings</a>',
+      type: 'onClick',
+      fun: () => {
+        socket.emit('clear-drawings', { username: 'user' });
+      },
+      style: '.brushie-clear-drawings {background-color: white}',
     },
   ];
   this.hotKey = 'b';
@@ -140,7 +216,7 @@ let BrushieTool = function () {
   // TOOL PROPERTIES
   this.tempLine = {
     points: [],
-    width: 1,
+    width: 5,
     color: 'black',
   };
   this.drawing = false;
@@ -177,7 +253,7 @@ let BrushieTool = function () {
       y: lastPoint.y - canvasMap.camera2d.y,
     });
     // Filter the repeated points
-    for (let i = 0; i < finishedLine.points.length; i++) {
+    for (let i = 0; i < finishedLine.points.length; i) {
       let point = finishedLine.points[i];
       if (lastPoint.x != point.x || lastPoint.y != point.y) {
         trimmedLine.points.push({
@@ -186,6 +262,10 @@ let BrushieTool = function () {
         });
         lastPoint = point;
       }
+      // To reduce the amount of points we skip 2 of them each loop
+      if (i + 3 < finishedLine.points.length) {
+        i += 3;
+      } else i++;
     }
     // If the line has less than 3 points then fuck it
     if (trimmedLine.points.length <= 3) {

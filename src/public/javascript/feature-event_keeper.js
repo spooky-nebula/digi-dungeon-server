@@ -18,6 +18,10 @@ socket.on('request-shard-data-response', (data) => {
         canvasMap.addDrawing(event.data.finishedLine);
         break;
 
+      case 'clear-drawings':
+        canvasMap.clearDrawings(event.data.all);
+        break;
+
       default:
         break;
     }

@@ -130,6 +130,12 @@ io.on('connection', (socket) => {
     io.to('universal').emit('drawing-added', data);
   });
 
+  socket.on('clear-drawings', (data) => {
+    data.all = data.all || true;
+    addEvent('clear-drawings', data);
+    io.to('universal').emit('drawing-clear-all', data);
+  });
+
   socket.on('disconnect', () => {
     console.log(socket.id + ' disconnected');
   });

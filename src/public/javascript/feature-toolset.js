@@ -35,11 +35,11 @@ toolset.forceUpdateToolbar = () => {
     toolButtonElement.querySelector('p').textContent = tool.name;
     toolButtonElement.querySelector('img').src = tool.iconPath;
     toolButtonElement.title = 'hotkey: "' + tool.hotKey + '"' || tool.name;
-    toolButtonElement.dataset.index = index;
+    toolButtonElement.dataset.tool_index = index;
     toolButtonElement.addEventListener('mouseup', (event) => {
-      console.log(event);
       let i = parseInt(
-        event.target.parentElement.dataset.index || event.target.dataset.index
+        event.target.parentElement.dataset.tool_index ||
+          event.target.dataset.tool_index
       );
       toolset.switchTo(i);
     });
@@ -51,6 +51,36 @@ toolset.forceUpdateToolbar = () => {
           .querySelector('#toolset-tool-option-template .tool-option')
           .cloneNode(true);
         oElement.innerHTML = option.html;
+        // Check if the option has a function
+        if (option.fun != undefined && typeof option.fun == 'function') {
+          // Set the index for backtracking later
+          oElement.dataset.tool_index = index;
+          oElement.dataset.option_index = jndex;
+          // If the type is a clickable then listen for clicks lol
+          if (option.type == 'onClick') {
+            oElement.addEventListener('mouseup', (event) => {
+              // Backtrack the index of the tool and the option
+              let tool_i = parseInt(
+                event.target.parentElement.dataset.tool_index ||
+                  event.target.dataset.tool_index
+              );
+              let option_i = parseInt(
+                event.target.parentElement.dataset.option_index ||
+                  event.target.dataset.option_index
+              );
+              // Run the function associated with the option
+              toolset.tools[tool_i].options[option_i].fun();
+            });
+          }
+        }
+
+        // Add the style sheet if any
+        if (option.style != undefined && typeof option.style == 'string') {
+          let stylE = document.createElement('style');
+          stylE.innerHTML = option.style;
+          oElement.append(stylE);
+        }
+
         toolOptionsElement.appendChild(oElement);
       });
     }
