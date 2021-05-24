@@ -40,6 +40,11 @@ let requestDiceRoll = function (diceType, diceQuantity, modifier) {
     toggleRollMenu(false);
     return;
   }
+  if (diceQuantity > 69) {
+    addChatLogMessage('Cannot roll quantities over 69');
+    toggleRollMenu(false);
+    return;
+  }
   let data = {
     diceType: diceType,
     diceQuantity: diceQuantity,

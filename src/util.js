@@ -1,5 +1,10 @@
 let rollDice = function (diceQuantity, diceType, modifier) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    if (diceQuantity > 69) {
+      console.log("too many dice rolled");
+      reject();
+    }
+  
     if (diceQuantity == 1) {
       console.log('dice singular');
       let data = {};

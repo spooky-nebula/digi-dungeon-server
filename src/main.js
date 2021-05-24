@@ -112,6 +112,9 @@ io.on('connection', (socket) => {
         data = { ...data, ...dice };
         addEvent('roll-dice', data);
         io.to('universal').emit('roll-dice-result', data);
+      })
+      .catch(() => {
+        return;
       });
   });
 
