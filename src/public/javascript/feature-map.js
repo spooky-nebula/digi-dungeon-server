@@ -143,6 +143,24 @@ canvasMap.draw = () => {
     ctx.stroke();
   });
 
+  canvasMap.backgroundLayer.forEach((entity) => {
+    let x = entity.x + canvasMap.camera2d.x;
+    let y = entity.y + canvasMap.camera2d.y;
+    let width = entity.width;
+    let height = entity.height;
+    let rotation = entity.rotation;
+    let source = entity.src;
+  });
+
+  canvasMap.tokenLayer.forEach((token) => {
+    let x = token.x * canvasMap.grid.tileSize.x + canvasMap.camera2d.x;
+    let y = token.y * canvasMap.grid.tileSize.y + canvasMap.camera2d.y;
+
+    let source = token.src;
+
+    ctx.drawImage(source, x, y, token.size.x, token.size.y);
+  });
+
   toolset.tools.forEach((tool, index) => {
     tool.draw(ctx, canvasMap.camera2d);
   });
