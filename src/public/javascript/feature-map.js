@@ -1,8 +1,17 @@
+//import * as THREE from 'https://cdn.skypack.dev/three';
+
 let canvasMap = {};
 
 canvasMap.backgroundLayer = [];
 canvasMap.tokenLayer = [];
 canvasMap.drawingLayer = [];
+
+// ddd stands for 3D
+canvasMap.ddd = {
+  scene: null,
+  camera: null,
+  renderer: null,
+};
 
 canvasMap.grid = {
   size: {
@@ -46,6 +55,21 @@ canvasMap.init = () => {
   // Set the camera to the middle of the map
   canvasMap.camera2d.x = window.innerWidth / 2 - canvasMap.grid.size.x / 2;
   canvasMap.camera2d.y = window.innerHeight / 2 - canvasMap.grid.size.y / 2;
+
+  // Initialize THREE.JS
+  /* canvasMap.ddd.scene = new THREE.Scene();
+  canvasMap.ddd.camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+
+  canvasMap.ddd.renderer = new THREE.WebGLRenderer({
+    canvas: canvasMap.canvasElement,
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight); */
+  //document.body.appendChild(renderer);
 };
 
 /**
@@ -113,53 +137,9 @@ canvasMap.draw = () => {
     ctx.stroke();
   }
 
-  canvasMap.drawingLayer.forEach((drawing) => {
-    // Set style and width
-    ctx.strokeStyle = drawing.color;
-    ctx.lineWidth = drawing.width;
-    // Begin the line
-    ctx.beginPath();
-    // Add each point
-    drawing.points.forEach((point) => {
-      /* This is to not draw drawings off the edge, doesn't look good
-      if (
-        point.x > window.innerWidth - this.camera2d.x ||
-        point.x < 0 - this.camera2d.x
-      ) {
-        return;
-      }
-      if (
-        point.y > window.innerHeight - this.camera2d.y ||
-        point.y < 0 - this.camera2d.y
-      ) {
-        return;
-      } */
-      ctx.lineTo(
-        point.x + canvasMap.camera2d.x,
-        point.y + canvasMap.camera2d.y
-      );
-    });
-    // Finish the line and draw it
-    ctx.stroke();
-  });
-
-  canvasMap.backgroundLayer.forEach((entity) => {
-    let x = entity.x + canvasMap.camera2d.x;
-    let y = entity.y + canvasMap.camera2d.y;
-    let width = entity.width;
-    let height = entity.height;
-    let rotation = entity.rotation;
-    let source = entity.src;
-  });
-
-  canvasMap.tokenLayer.forEach((token) => {
-    let x = token.x * canvasMap.grid.tileSize.x + canvasMap.camera2d.x;
-    let y = token.y * canvasMap.grid.tileSize.y + canvasMap.camera2d.y;
-
-    let source = token.src;
-
-    ctx.drawImage(source, x, y, token.size.x, token.size.y);
-  });
+  canvasMap.drawBackgroundLayer(ctx);
+  canvasMap.drawTokenLayer(ctx);
+  canvasMap.drawDrawingLayer(ctx);
 
   toolset.tools.forEach((tool, index) => {
     tool.draw(ctx, canvasMap.camera2d);
@@ -179,6 +159,61 @@ canvasMap.draw = () => {
     canvasMap.camera2d.y + 40
   ); */
 };
+
+canvasMap.drawDrawingLayer = (ctx) => {
+  canvasMap.drawingLayer.forEach((drawing) => {
+    // Skip if "center" is off screen
+    if (
+      drawing.origin.x > window.innerWidth - canvasMap.camera2d.x ||
+      drawing.origin.x < 0 - canvasMap.camera2d.x
+    ) {
+      return;
+    }
+    if (
+      drawing.origin.y > window.innerHeight - canvasMap.camera2d.y ||
+      drawing.origin.y < 0 - canvasMap.camera2d.y
+    ) {
+      return;
+    }
+    // Set style and width
+    ctx.strokeStyle = drawing.color;
+    ctx.lineWidth = drawing.width;
+    // Begin the line
+    ctx.beginPath();
+    // Add each point
+    drawing.points.forEach((point) => {
+      ctx.lineTo(
+        point.x + canvasMap.camera2d.x,
+        point.y + canvasMap.camera2d.y
+      );
+    });
+    // Finish the line and draw it
+    ctx.stroke();
+  });
+};
+
+canvasMap.drawBackgroundLayer = (ctx) => {
+  canvasMap.backgroundLayer.forEach((entity) => {
+    let x = entity.x + canvasMap.camera2d.x;
+    let y = entity.y + canvasMap.camera2d.y;
+    let width = entity.width;
+    let height = entity.height;
+    let rotation = entity.rotation;
+    let source = entity.src;
+  });
+};
+
+canvasMap.drawTokenLayer = (ctx) => {
+  canvasMap.tokenLayer.forEach((token) => {
+    let x = token.x * canvasMap.grid.tileSize.x + canvasMap.camera2d.x;
+    let y = token.y * canvasMap.grid.tileSize.y + canvasMap.camera2d.y;
+
+    let source = token.src;
+
+    ctx.drawImage(source, x, y, token.size.x, token.size.y);
+  });
+};
+
 // UPDATE FUNCTION
 canvasMap.update = () => {};
 
@@ -191,10 +226,10 @@ canvasMap.redraw = () => {
   canvasMap.canvasContext.strokeStyle = 'black';
   canvasMap.canvasContext.lineWidth = '10';
   canvasMap.canvasContext.strokeRect(
-    5,
-    5,
-    window.innerWidth - 5,
-    window.innerHeight - 5
+    0,
+    0,
+    window.innerWidth - 0,
+    window.innerHeight - 0
   );
 };
 

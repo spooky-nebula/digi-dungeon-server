@@ -53,8 +53,7 @@ let Panner = function () {
   this.options = [
     {
       name: 'Inverted',
-      html:
-        '<input class="panner-inverted-picker" type="checkbox" value="inverted" checked title="inverted drag" alt="inverted drag">',
+      html: '<input class="panner-inverted-picker" type="checkbox" value="inverted" checked title="inverted drag" alt="inverted drag">',
       type: 'onClick',
       style: '.panner-inverted-picker {width: 100%; height: 100%}',
     },
@@ -126,15 +125,13 @@ let BrushieTool = function () {
   this.options = [
     {
       name: 'Colour Picker',
-      html:
-        '<input class="brushie-colour-picker" type="color" value="#000000">',
+      html: '<input class="brushie-colour-picker" type="color" value="#000000">',
       type: 'picker',
       style: '.brushie-colour-picker {width: 100%; height: 100%}',
     },
     {
       name: 'Width Picker 5 Small',
-      html:
-        '<a class="brushie-width-picker-small" href="#" onclick="return false;">',
+      html: '<a class="brushie-width-picker-small" href="#" onclick="return false;">',
       type: 'onClick',
       fun: () => {
         this.tempLine.width = 5;
@@ -144,8 +141,7 @@ let BrushieTool = function () {
     },
     {
       name: 'Width Picker 10 Medium',
-      html:
-        '<a class="brushie-width-picker-medium" href="#" onclick="return false;">',
+      html: '<a class="brushie-width-picker-medium" href="#" onclick="return false;">',
       type: 'onClick',
       fun: () => {
         this.tempLine.width = 10;
@@ -155,8 +151,7 @@ let BrushieTool = function () {
     },
     {
       name: 'Width Picker 15 Big',
-      html:
-        '<a class="brushie-width-picker-big" href="#" onclick="return false;">',
+      html: '<a class="brushie-width-picker-big" href="#" onclick="return false;">',
       type: 'onClick',
       fun: () => {
         this.tempLine.width = 15;
@@ -166,8 +161,7 @@ let BrushieTool = function () {
     },
     {
       name: 'Clear Drawing',
-      html:
-        '<a class="brushie-clear-drawings" href="#" onclick="return false;">Clear Drawings</a>',
+      html: '<a class="brushie-clear-drawings" href="#" onclick="return false;">Clear Drawings</a>',
       type: 'onClick',
       fun: () => {
         socket.emit('clear-drawings', { username: 'user' });
@@ -279,11 +273,18 @@ let BrushieTool = function () {
         i += 3;
       } else i++;
     }
+    let pointCount = trimmedLine.points.length;
     // If the line has less than 3 points then fuck it
-    if (trimmedLine.points.length <= 3) {
+    if (pointCount <= 3) {
       this.resetPoints();
       return;
     }
+    // Set the origin to the most middlepoint point because
+    // it could be at the centre
+    trimmedLine.origin = {
+      x: trimmedLine.points[pointCount >> 1].x,
+      y: trimmedLine.points[pointCount >> 1].y,
+    };
     // Add the drawing to the drawing layer
     socket.emit('drawing-add', trimmedLine);
     // Reset the temp line
