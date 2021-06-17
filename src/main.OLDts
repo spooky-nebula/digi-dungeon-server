@@ -1,0 +1,156 @@
+// General Utility modules
+import {ChatMessageEvent, DiceRollEvent, DrawingAddEvent, DrawingClearEvent, DrawingUndoEvent} from "./core/event";
+import DrawingLine from "./core/map/drawingLine";
+import * as core from './core';
+
+// Import the Util js
+import * as util from './core/util';
+
+import * as path from 'path';
+import * as fs from 'fs';
+
+// For the HTTP server
+import * as express from 'express'
+import {Response, Request} from 'express'
+const app = express.default();
+import * as http from 'http'
+const httpApp = http.createServer(app);
+
+// Import the Nunjucks package
+import * as nunjucks from 'nunjucks';
+
+// Start the socket server
+import { Server, Socket } from 'socket.io'
+const io = new Server(httpApp, {
+  // Allow cross origin requests
+  // This allows for third party clients for the chat
+  cors: {
+    // The `*` is used as the wildcard here.
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['content-type'],
+  },
+});
+
+// Set nunjucks as the render engine
+nunjucks.configure('views', {
+  autoescape: true,
+  express: app,
+});
+app.set('view engine', 'html');
+
+// Tell the server what port it should use. 8080 is for testing purposes
+const PORT = parseInt(process.env.PORT || "8080");
+
+// Set up the parser for requests that are json type
+app.use(require('body-parser').json('application/json'));
+
+// Use the public directory for files
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// GAME DATA
+let Shard = new core.Shard.default();
+
+// SERVER RESPONSES
+
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).render('index');
+});
+
+// SOCKET IO RESPONSES
+
+// On socket connection
+io.on('connection', (socket: any) => {
+  console.log(socket.id + ' connected');
+
+  socket.join('universal');
+
+  socket.on('request-shard-data', (data: any) => {
+    io.to(socket.id).emit(
+      'request-shard-data-response',
+      Shard.getSimpleData()
+    );
+  });
+
+  socket.on('message', (data: any) => {
+    switch (data.type) {
+      case 'text':
+        data.username = socket.id;
+        if (typeof data.content != 'string') {
+          return false;
+        }
+        data.content = data.content.trim();
+        if (data.content == '') {
+          return false;
+        }
+        let event = new ChatMessageEvent(socket.id);
+        addEvent(event);
+        io.to('universal').emit('chat-text', {
+          text: data.content,
+          username: data.username,
+        });
+        break;
+    }
+  });
+
+  socket.on('roll-dice', (data: any) => {
+    console.log(data);
+    util.dice
+      .roll(data.diceQuantity, data.diceType, data.modifier)
+      .then((dice) => {
+        let returnData = { ...data, ...dice };
+
+        let event = new DiceRollEvent(socket.id);
+        event.roll = dice;
+        addEvent(event);
+
+        io.to('universal').emit('roll-dice-result', returnData);
+      })
+      .catch(() => {
+        return;
+      });
+  });
+
+  socket.on('drawing-add', (finishedLine: DrawingLine) => {
+    console.log(finishedLine);
+
+    if (finishedLine.points == undefined || finishedLine.points.length == 0) {
+      return;
+    }
+
+    let data = {
+      finishedLine: finishedLine,
+    };
+
+    let event = new DrawingAddEvent(socket.id);
+    event.finishedLine = data.finishedLine;
+
+    addEvent(event);
+    io.to('universal').emit('drawing-added', data);
+  });
+
+  socket.on('clear-drawings', (data: any) => {
+    let event = new DrawingClearEvent(socket.id);
+    event.all = data.all || true;
+    addEvent(event);
+    io.to('universal').emit('drawing-clear-all', data);
+  });
+
+  socket.on('drawing-undo', (data: any) => {
+    let event = new DrawingUndoEvent(socket.id);
+    addEvent(event);
+    io.to('universal').emit('drawing-undone', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(socket.id + ' disconnected');
+  });
+});
+
+let addEvent = function (event: core.Event.default) {
+  Shard.gamelog.push(event);
+};
+
+httpApp.listen(PORT, function () {
+  console.log('Listening on *:', PORT);
+});
