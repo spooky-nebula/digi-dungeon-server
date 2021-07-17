@@ -1,9 +1,9 @@
 {
-  "name": "digi-dungeon",
+  "name": "digi-dungeon-server",
   "version": "1.0.0",
   "description": "",
   "main": "./src/index.ts",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./dist/index.js",
@@ -15,9 +15,13 @@
   "license": "MIT",
   "repository": "https://github.com/spooky-nebula/digi-dungeon-server",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "digi-dungeon-api": "^0.1.11",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "mongodb": "^4.0.0",
     "redis": "^3.1.2",
+    "redis-json": "^6.0.1",
     "socket.io": "^4.1.2",
     "socket.io-client": "^4.1.2"
   },
