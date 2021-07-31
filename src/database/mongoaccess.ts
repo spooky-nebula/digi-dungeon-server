@@ -35,8 +35,11 @@ export default class MongoAccess {
       });
     }
 
-    this.client.on('serverOpening', () => {
-      console.log('[Mongo Access] Connected successfully to database server');
+    this.client.once('serverOpening', () => {
+      console.log(
+        '[Mongo Access]',
+        'Connected successfully to database server'
+      );
     });
 
     this.client.on('error', (err) => {
@@ -142,6 +145,24 @@ export default class MongoAccess {
         .then((userData) => {
           if (userData == null) {
             reject('Token is Invalid');
+            return;
+          }
+          resolve(userData);
+        })
+        .catch((err) => {
+          console.error(err);
+          reject('Database Error');
+        });
+    });
+  }
+
+  getUserFromId(id: string): Promise<UserDataSchema> {
+    return new Promise((resolve, reject) => {
+      let query = { userId: id };
+      this.retrieveOne('auth/userdata', query)
+        .then((userData) => {
+          if (userData == null) {
+            reject('UserData was not found');
             return;
           }
           resolve(userData);

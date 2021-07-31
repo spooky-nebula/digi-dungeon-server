@@ -109,8 +109,8 @@ export default class Communications {
 
         Communications.decideAndHandleBoardEvent(socket, eventData).then(
           (eventDataToSend) => {
-            Database.redis.getUsername(socket).then((username) => {
-              eventDataToSend.sender = username || eventData.sender;
+            Database.redis.getUserId(socket).then((userId) => {
+              eventDataToSend.sender = userId || eventData.sender;
 
               this.io.to(shardId).emit('board-event', eventDataToSend);
               socket.emit('board-event-sent');

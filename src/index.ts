@@ -35,6 +35,7 @@ Database.init();
 Communications.init(io);
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 //#endregion
 
 //#region HTTP POST/GET STUFF
@@ -53,6 +54,32 @@ app.get('/cdn', (req: express.Request, res: express.Response) => {
     status: 'Offline'
   });
 });
+
+app.get(
+  '/api/user',
+  (
+    req: express.Request<{}, {}, {}, { userId: string }>,
+    res: express.Response
+  ) => {
+    const { userId } = req.query;
+    if (userId == '') {
+      res.status(400).json({
+        message: 'Bad user request, format should be' + '{userId: string}'
+      });
+      return;
+    }
+    Database.mongo
+      .getUserFromId(userId)
+      .then((user) => {
+        res.status(200).json({ userId: user.userId, username: user.username });
+        return;
+      })
+      .catch((err) => {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      });
+  }
+);
 
 app.post(
   '/register',
