@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 /**
  * Generates a random string of characters
  * @param length
@@ -28,9 +30,18 @@ function generateNumber(length: number): string {
 function generateSet(length: number, set: string): string {
   let result = '';
   let setLength = set.length;
-  for (let i = 0; i < length; i++) {
-    result += set.charAt(Math.floor(Math.random() * setLength));
+
+  //for (let i = 0; i < length; i++) {
+  //  result += set.charAt(Math.floor(Math.random() * setLength));
+  //}
+
+  // True random better than pseudo random????
+  let bytes = crypto.randomBytes(length);
+
+  for (let i = 0; i < bytes.length; ++i) {
+    result += set[bytes.readUInt8(i) % setLength];
   }
+
   return result;
 }
 
