@@ -3,9 +3,12 @@
  * @param {string} str
  * @return {string}
  */
-function sanitize(str: string)
-{
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+function sanitize(str: string) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 /**
@@ -13,9 +16,8 @@ function sanitize(str: string)
  * @param {string} str
  * @return {string[]}
  */
-function diceUp(str: string) : string[]
-{
-    return str.split("\n");
+function diceUp(str: string): string[] {
+  return str.split('\n');
 }
 
 /**
@@ -23,13 +25,8 @@ function diceUp(str: string) : string[]
  * @param {string} str
  * @return {string}
  */
-function getValue(str: string) : string
-{
-    return str.substring(str.indexOf(":") + 1);
+function getValue(str: string): string {
+  return str.substring(str.indexOf(':') + 1);
 }
 
-export {
-    sanitize,
-    diceUp,
-    getValue
-}
+export { sanitize, diceUp, getValue };

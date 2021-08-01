@@ -8,6 +8,7 @@ import { sanitize } from '../util/stringExtensions';
 import PartyMember from 'digi-dungeon-api/dist/party';
 import e from 'express';
 import { SimpleShardData } from 'digi-dungeon-api/dist/shard';
+import { hashIt } from '../util/cryptography';
 dotenv.config();
 // import * as redis from 'redis';
 // import { randomColour } from './core/random';
@@ -27,9 +28,11 @@ dotenv.config();
 
 export default class Communications {
   static io: socketIO.Server;
+  static logPrefix: string;
 
   static init(io: socketIO.Server) {
     this.io = io;
+    this.logPrefix = '[Communications]';
   }
 
   static handshakeHandler(
@@ -49,20 +52,23 @@ export default class Communications {
 
         Database.redis.getShard(sanitizedShardId).then((shard) => {
           if (shard == undefined || shard == null) {
-            console.log(sanitizedShardId, "didn't exist, creating fresh shard");
+            console.log(
+              this.logPrefix,
+              sanitizedShardId,
+              "didn't exist, creating fresh shard"
+            );
             shard = new ddapi.Shard.default();
             shard.id = sanitizedShardId;
-            partyMember.playerID = 0;
-          } else {
-            partyMember.playerID = shard.partyList.length - 1;
           }
+
           // Check if player already exists (In case of reconnection)
-          let existingPartyMember = shard.partyList.find(
-            (existingPartyMember) => {
+          let partyMemberExists =
+            shard.partyList.find((existingPartyMember) => {
               return existingPartyMember.userID == partyMember.userID;
-            }
-          );
-          if (existingPartyMember == undefined) {
+            }) != undefined;
+
+          if (!partyMemberExists) {
+            partyMember.playerID = hashIt(userData.userId).substring(0, 6);
             shard.partyList.push(partyMember);
           }
 
@@ -74,8 +80,9 @@ export default class Communications {
             socket.emit('handshake-ack', simpleData);
             socket.join(sanitizedShardId);
             console.log(
+              this.logPrefix,
               userData.username,
-              '(' + userData.userId + ')',
+              '(' + userData.userId.substring(0, 6) + ')',
               'joined',
               sanitizedShardId
             );
@@ -98,11 +105,14 @@ export default class Communications {
         return;
       }
 
-      console.log(eventData.name, 'on', shardId);
-
       Database.redis.getShard(shardId).then((shard) => {
         if (shard == null || shard == undefined) {
-          console.log('Shard', shardId, "doesn't exist, skipping event");
+          console.log(
+            this.logPrefix,
+            'Shard',
+            shardId,
+            "doesn't exist, skipping event"
+          );
 
           return;
         }
@@ -111,6 +121,16 @@ export default class Communications {
           (eventDataToSend) => {
             Database.redis.getUserId(socket).then((userId) => {
               eventDataToSend.sender = userId || eventData.sender;
+              eventDataToSend.timestamp = Date.now();
+
+              console.log(
+                this.logPrefix,
+                userId?.substring(0, 6),
+                'sent',
+                eventData.name,
+                'on',
+                shardId
+              );
 
               this.io.to(shardId).emit('board-event', eventDataToSend);
               socket.emit('board-event-sent');
@@ -167,8 +187,9 @@ export default class Communications {
 
           socket.leave(shardId);
           console.log(
+            this.logPrefix,
             userData.username,
-            '(' + userData.userId + ')',
+            '(' + userData.userId.substring(0, 6) + ')',
             'left',
             shardId
           );

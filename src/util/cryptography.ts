@@ -16,12 +16,8 @@ function saltPassword(
     // Generate the salt
     salt = generateString(8);
   }
-  // Set the hash
-  let hash = crypto.createHash('sha256');
-  // Hash the password and salt it
-  let hashedPassword = hash.update(password + salt).digest('hex');
   // Return the password and the salt
-  return { hashedPassword: hashedPassword, salt: salt };
+  return { hashedPassword: hashIt(password), salt: salt };
 }
 
 /**
@@ -51,4 +47,12 @@ function IsLoggedIn(
   return false;
 }
 
-export { saltPassword, NotAllowedUsernames, IsEmail, IsLoggedIn };
+function hashIt(str: string): string {
+  // Set the hash
+  let hash = crypto.createHash('sha256');
+  // Hash the password and salt it
+  let hashedString = hash.update(str).digest('hex');
+  return hashedString;
+}
+
+export { saltPassword, NotAllowedUsernames, IsEmail, IsLoggedIn, hashIt };
