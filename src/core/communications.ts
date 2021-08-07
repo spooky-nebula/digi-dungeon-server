@@ -10,21 +10,6 @@ import e from 'express';
 import { SimpleShardData } from 'digi-dungeon-api/dist/shard';
 import { hashIt } from '../util/cryptography';
 dotenv.config();
-// import * as redis from 'redis';
-// import { randomColour } from './core/random';
-
-// import * as RedisAccess from './core/redisaccess';
-
-// // Create the database client
-// let RedisClient = redis.createClient({
-//   host: 'open360-redis-socket',
-//   port: 6379
-// });
-
-// // Listen for any database errors
-// RedisClient.on('error', function (error) {
-//   console.error(error);
-// });
 
 export default class Communications {
   static io: socketIO.Server;
@@ -39,17 +24,24 @@ export default class Communications {
     socket: socketIO.Socket,
     data: ddapi.Auth.Handshake.HandshakeData
   ) {
+    // Should add a check for data structure but whatever
+
+    // Retrieve user
     Database.mongo
       .getUserFromToken(data.token)
       .then((userData) => {
+        // Sanitize the shard ID given because we create shards on demand
         let sanitizedShardId = sanitize(data.shardID);
         let partyMember = new PartyMember();
         partyMember.userID = userData.userId;
+
+        // Save this socket to the database with some cached user info
         Database.redis.setToken(socket, userData.token);
         Database.redis.setUserId(socket, userData.userId);
         Database.redis.setUsername(socket, userData.username);
         Database.redis.setShardId(socket, sanitizedShardId);
 
+        // Check if the shard already exists and send the data over
         Database.redis.getShard(sanitizedShardId).then((shard) => {
           if (shard == undefined || shard == null) {
             console.log(
@@ -194,10 +186,13 @@ export default class Communications {
             shardId
           );
 
+          // Reset the cached userdata
           Database.redis.setToken(socket, '');
           Database.redis.setUserId(socket, '');
           Database.redis.setUsername(socket, '');
           Database.redis.setShardId(socket, '');
+
+          // Remove the plauer from the shard
           Database.redis.getShard(shardId).then((shard) => {
             if (shard == null || shard == undefined) {
               return;
@@ -214,11 +209,16 @@ export default class Communications {
 
             shard.partyList.splice(indexOfPlayer, 1);
 
-            Database.redis.saveShard(shard);
-            // WARNING: Might break something lol
-            this.io
-              .to(shardId)
-              .emit('forced-resync', new SimpleShardData(shard));
+            // If the shard is empty delete it lol
+            if (shard.partyList.length == 0) {
+              Database.redis.deleteShard(shard.id);
+            } else {
+              Database.redis.saveShard(shard);
+              // WARNING: Might break something lol
+              this.io
+                .to(shardId)
+                .emit('forced-resync', new SimpleShardData(shard));
+            }
           });
         });
       });

@@ -101,6 +101,10 @@ export default class RedisAccess {
     return this.getShardKey(shardId);
   }
 
+  deleteShard(shardId: string): Promise<number> {
+    return this.deleteKey('shard/' + shardId);
+  }
+
   private setKey(key: string, value: string): Promise<void> {
     return new Promise((resolve) => {
       this.connect().then((c: RedisClient) => {
@@ -116,6 +120,17 @@ export default class RedisAccess {
     return new Promise((resolve) => {
       this.connect().then((c: RedisClient) => {
         c.get(key, (err, reply) => {
+          resolve(reply);
+        });
+        c.unref();
+      });
+    });
+  }
+
+  private deleteKey(key: string): Promise<number> {
+    return new Promise((resolve) => {
+      this.connect().then((c: RedisClient) => {
+        c.del(key, (err, reply) => {
           resolve(reply);
         });
         c.unref();
