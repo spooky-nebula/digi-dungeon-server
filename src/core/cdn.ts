@@ -1,5 +1,4 @@
 import express from 'express';
-import Database from '../database';
 
 export default class CDN {
   static logPrefix: string;

@@ -31,6 +31,7 @@ const PORT = 8080;
 
 Database.init();
 Communications.init(io);
+Authentication.init();
 CDN.init();
 WebAPI.init();
 

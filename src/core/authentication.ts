@@ -1,10 +1,12 @@
 import express from 'express';
+import { AuthRequestResponse } from 'digi-dungeon-api/dist/auth/userdata';
+
 import Database from '../database';
+
 import { UserDataSchema } from '../database/mongoaccess';
 import { saltPassword } from '../util/cryptography';
 import { sanitize } from '../util/stringExtensions';
 import { random } from '../util';
-import { AuthRequestResponse } from 'digi-dungeon-api/dist/auth/userdata';
 
 export default class Authentication {
   static logPrefix: string;

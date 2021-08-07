@@ -1,15 +1,12 @@
 import * as socketIO from 'socket.io';
 import * as ddapi from 'digi-dungeon-api';
+import PartyMember from 'digi-dungeon-api/dist/party';
+import { SimpleShardData } from 'digi-dungeon-api/dist/shard';
 
 import Database from '../database/index';
 
-import dotenv from 'dotenv';
 import { sanitize } from '../util/stringExtensions';
-import PartyMember from 'digi-dungeon-api/dist/party';
-import e from 'express';
-import { SimpleShardData } from 'digi-dungeon-api/dist/shard';
 import { hashIt } from '../util/cryptography';
-dotenv.config();
 
 export default class Communications {
   static io: socketIO.Server;
