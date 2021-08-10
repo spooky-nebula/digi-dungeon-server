@@ -80,6 +80,7 @@ io.on('connection', (socket: socketIO.Socket) => {
 
 //#endregion
 
+//#region Start and Finish
 server.listen(PORT, () => {
   console.log('Listening on port:', PORT);
 });
@@ -99,3 +100,4 @@ function exitGracefully() {
 process.on('SIGINT', exitGracefully);
 process.on('SIGTERM', exitGracefully);
 process.on('SIGHUP', exitGracefully);
+//#endregion
