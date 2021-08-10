@@ -1,5 +1,5 @@
 import express from 'express';
-import { AuthRequestResponse } from 'digi-dungeon-api/dist/auth/userdata';
+import { AuthResponse } from 'digi-dungeon-api/dist/auth/userdata';
 
 import Database from '../database';
 
@@ -18,7 +18,7 @@ export default class Authentication {
   private static checkRegisterBody(
     username: string,
     password: string
-  ): AuthRequestResponse {
+  ): AuthResponse {
     if (password.length <= 8) {
       return { success: false, token: 'Password too short' };
     }
@@ -30,7 +30,7 @@ export default class Authentication {
 
   static POST_register(
     req: express.Request,
-    res: express.Response<AuthRequestResponse>
+    res: express.Response<AuthResponse>
   ) {
     const { username, password } = req.body;
     if (username == '' || password == '') {
@@ -39,7 +39,7 @@ export default class Authentication {
         .json({ success: false, token: 'No password or username given' });
       return;
     }
-    const check = this.checkRegisterBody(username, password);
+    const check = Authentication.checkRegisterBody(username, password);
     if (!check.success) {
       res.status(200).json(check);
     }
@@ -64,10 +64,7 @@ export default class Authentication {
     });
   }
 
-  static POST_login(
-    req: express.Request,
-    res: express.Response<AuthRequestResponse>
-  ) {
+  static POST_login(req: express.Request, res: express.Response<AuthResponse>) {
     const username = req.body.username;
 
     // We technically don't need to check if the username exists since
@@ -92,7 +89,7 @@ export default class Authentication {
 
   static POST_logout(
     req: express.Request,
-    res: express.Response<AuthRequestResponse | any>
+    res: express.Response<AuthResponse | any>
   ) {
     const { token } = req.body;
     Database.mongo
