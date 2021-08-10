@@ -2,6 +2,8 @@ import { Db, MongoClient, MongoError } from 'mongodb';
 import { cryptography } from '../util';
 
 export default class MongoAccess {
+  logPrefix = '[Mongo Access]';
+
   client?: MongoClient;
   hostname: string;
   dbName: string;
@@ -24,10 +26,8 @@ export default class MongoAccess {
   init() {
     // Connection URL
     this.url = 'mongodb://' + this.hostname;
-    if (
-      (this.username && this.password) ||
-      (this.username == undefined && this.password == undefined)
-    ) {
+
+    if (this.username == undefined && this.password == undefined) {
       this.client = new MongoClient(this.url);
     } else {
       this.client = new MongoClient(this.url, {
@@ -35,15 +35,14 @@ export default class MongoAccess {
       });
     }
 
+    let logPrefix = this.logPrefix;
+
     this.client.once('serverOpening', () => {
-      console.log(
-        '[Mongo Access]',
-        'Connected successfully to database server'
-      );
+      console.log(logPrefix, 'Connected successfully to database server');
     });
 
     this.client.on('error', (err) => {
-      console.log('[Mongo Access]', err);
+      console.log(logPrefix, err);
     });
   }
 
@@ -66,6 +65,19 @@ export default class MongoAccess {
           console.error(err);
           reject();
         });
+    });
+  }
+
+  dispose(): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.client != undefined) {
+        this.client.close().then(() => {
+          console.log(this.logPrefix, 'Client successfully disconnected.');
+          resolve();
+        });
+      } else {
+        resolve();
+      }
     });
   }
 

@@ -83,3 +83,19 @@ io.on('connection', (socket: socketIO.Socket) => {
 server.listen(PORT, () => {
   console.log('Listening on port:', PORT);
 });
+
+let exiting = false;
+
+function exitGracefully() {
+  if (!exiting) {
+    exiting = true;
+    console.info('\nExiting Gracefully.');
+    Database.dispose().then(() => {
+      process.exit(0);
+    });
+  }
+}
+
+process.on('SIGINT', exitGracefully);
+process.on('SIGTERM', exitGracefully);
+process.on('SIGHUP', exitGracefully);

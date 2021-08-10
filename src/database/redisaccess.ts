@@ -7,6 +7,8 @@ import * as socketIO from 'socket.io';
 import { Shard } from 'digi-dungeon-api';
 
 export default class RedisAccess {
+  logPrefix = '[Redis Access]';
+
   client?: RedisClient;
   hostname: string;
   private url?: string;
@@ -20,17 +22,19 @@ export default class RedisAccess {
     this.url = 'redis://' + this.hostname;
     this.client = redis.createClient(this.url);
 
+    let logPrefix = this.logPrefix;
+
     // Clear database because fuck presistance
     this.client.flushdb(function (err, succeeded) {
-      console.log('[Redis Access]', 'Memory Flushed');
+      console.log(logPrefix, 'Memory Flushed');
     });
 
     this.client.once('connect', () => {
-      console.log('[Redis Access]', 'Connected successfully to session server');
+      console.log(logPrefix, 'Connected successfully to session server');
     });
 
     this.client.on('error', (err) => {
-      console.log('[Redis Access]', err);
+      console.log(logPrefix, err);
     });
   }
 
@@ -42,6 +46,19 @@ export default class RedisAccess {
       }
 
       resolve(this.client);
+    });
+  }
+
+  dispose(): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.client != undefined) {
+        this.client.quit((err, reply) => {
+          console.log(this.logPrefix, 'Client successfully disconnected.');
+          resolve();
+        });
+      } else {
+        resolve();
+      }
     });
   }
 
@@ -136,7 +153,7 @@ export default class RedisAccess {
         c.set(key, value, (err, reply) => {
           resolve();
         });
-        c.quit();
+        //c.quit();
       });
     });
   }
@@ -147,7 +164,7 @@ export default class RedisAccess {
         c.get(key, (err, reply) => {
           resolve(reply);
         });
-        c.quit();
+        //c.quit();
       });
     });
   }
@@ -158,7 +175,7 @@ export default class RedisAccess {
         c.del(key, (err, reply) => {
           resolve(reply);
         });
-        c.quit();
+        //c.quit();
       });
     });
   }
@@ -169,7 +186,7 @@ export default class RedisAccess {
         c.expire(key, expire, (err, reply) => {
           resolve(reply);
         });
-        c.quit();
+        //c.quit();
       });
     });
   }
@@ -180,7 +197,7 @@ export default class RedisAccess {
         c.persist(key, (err, reply) => {
           resolve(reply);
         });
-        c.quit();
+        //c.quit();
       });
     });
   }
@@ -201,7 +218,7 @@ export default class RedisAccess {
             console.log('[Redis Access] Error with JSON Cache', err);
             resolve();
           });
-        c.quit();
+        //c.quit();
       });
     });
   }
@@ -222,7 +239,7 @@ export default class RedisAccess {
             console.log('[Redis Access] Error with JSON Cache', err);
             resolve(null);
           });
-        c.quit();
+        //c.quit();
       });
     });
   }

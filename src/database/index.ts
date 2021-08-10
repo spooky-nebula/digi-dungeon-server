@@ -20,6 +20,11 @@ export default class Database {
     );
     this.redis.init();
   }
+
+  static dispose(): Promise<void[]> {
+    let d = [this.mongo.dispose(), this.redis.dispose()];
+    return Promise.all(d);
+  }
 }
 
 export { MongoAccess, RedisAccess };
