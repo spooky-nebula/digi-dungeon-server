@@ -111,7 +111,7 @@ export default class RedisAccess {
         c.set(key, value, (err, reply) => {
           resolve();
         });
-        c.unref();
+        c.quit();
       });
     });
   }
@@ -122,7 +122,7 @@ export default class RedisAccess {
         c.get(key, (err, reply) => {
           resolve(reply);
         });
-        c.unref();
+        c.quit();
       });
     });
   }
@@ -154,7 +154,7 @@ export default class RedisAccess {
             console.log('[Redis Access] Error with JSON Cache', err);
             resolve();
           });
-        c.unref();
+        c.quit();
       });
     });
   }
@@ -175,7 +175,7 @@ export default class RedisAccess {
             console.log('[Redis Access] Error with JSON Cache', err);
             resolve(null);
           });
-        c.unref();
+        c.quit();
       });
     });
   }
