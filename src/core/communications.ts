@@ -126,7 +126,9 @@ export default class Communications {
 
               shard.gamelog.push(eventDataToSend);
 
+              // Save the shard and unmark for deletion
               Database.redis.saveShard(shard);
+              Database.redis.unmarkShardForDeletion(shard.id);
             });
           }
         );
@@ -184,10 +186,10 @@ export default class Communications {
           );
 
           // Reset the cached userdata
-          Database.redis.setToken(socket, '');
-          Database.redis.setUserId(socket, '');
-          Database.redis.setUsername(socket, '');
-          Database.redis.setShardId(socket, '');
+          Database.redis.deleteToken(socket);
+          Database.redis.deleteUserId(socket);
+          Database.redis.deleteUsername(socket);
+          Database.redis.deleteShardId(socket);
 
           // Remove the plauer from the shard
           Database.redis.getShard(shardId).then((shard) => {
@@ -208,7 +210,8 @@ export default class Communications {
 
             // If the shard is empty delete it lol
             if (shard.partyList.length == 0) {
-              Database.redis.deleteShard(shard.id);
+              // Delete shard in 5 minutes
+              Database.redis.markShardForDeletion(shard.id);
             } else {
               Database.redis.saveShard(shard);
               // WARNING: Might break something lol

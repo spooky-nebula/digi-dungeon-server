@@ -53,6 +53,10 @@ export default class RedisAccess {
     return this.getKey(this.getTokenKey(socket));
   }
 
+  deleteToken(socket: socketIO.Socket): Promise<number> {
+    return this.deleteKey(this.getTokenKey(socket));
+  }
+
   setToken(socket: socketIO.Socket, newToken: string): Promise<void> {
     return this.setKey(this.getTokenKey(socket), newToken);
   }
@@ -63,6 +67,10 @@ export default class RedisAccess {
 
   getUserId(socket: socketIO.Socket): Promise<string | null> {
     return this.getKey(this.getUserIdKey(socket));
+  }
+
+  deleteUserId(socket: socketIO.Socket): Promise<number> {
+    return this.deleteKey(this.getUserIdKey(socket));
   }
 
   setUserId(socket: socketIO.Socket, newUserId: string): Promise<void> {
@@ -77,6 +85,10 @@ export default class RedisAccess {
     return this.getKey(this.getUsernameKey(socket));
   }
 
+  deleteUsername(socket: socketIO.Socket): Promise<number> {
+    return this.deleteKey(this.getUsernameKey(socket));
+  }
+
   setUsername(socket: socketIO.Socket, newUsername: string): Promise<void> {
     return this.setKey(this.getUsernameKey(socket), newUsername);
   }
@@ -87,6 +99,10 @@ export default class RedisAccess {
 
   getShardId(socket: socketIO.Socket): Promise<string | null> {
     return this.getKey(this.getShardIdKey(socket));
+  }
+
+  deleteShardId(socket: socketIO.Socket): Promise<number> {
+    return this.deleteKey(this.getShardIdKey(socket));
   }
 
   setShardId(socket: socketIO.Socket, newShardId: string): Promise<void> {
@@ -103,6 +119,15 @@ export default class RedisAccess {
 
   deleteShard(shardId: string): Promise<number> {
     return this.deleteKey('shard/' + shardId);
+  }
+
+  markShardForDeletion(shardId: string, expire?: number): Promise<number> {
+    // Delete shard in 5 minutes
+    return this.markForDeletion('shard/' + shardId, expire || 300);
+  }
+
+  unmarkShardForDeletion(shardId: string): Promise<number> {
+    return this.unmarkForDeletion('shard/' + shardId);
   }
 
   private setKey(key: string, value: string): Promise<void> {
@@ -133,7 +158,29 @@ export default class RedisAccess {
         c.del(key, (err, reply) => {
           resolve(reply);
         });
-        c.unref();
+        c.quit();
+      });
+    });
+  }
+
+  private markForDeletion(key: string, expire: number): Promise<number> {
+    return new Promise((resolve) => {
+      this.connect().then((c: RedisClient) => {
+        c.expire(key, expire, (err, reply) => {
+          resolve(reply);
+        });
+        c.quit();
+      });
+    });
+  }
+
+  private unmarkForDeletion(key: string): Promise<number> {
+    return new Promise((resolve) => {
+      this.connect().then((c: RedisClient) => {
+        c.persist(key, (err, reply) => {
+          resolve(reply);
+        });
+        c.quit();
       });
     });
   }
