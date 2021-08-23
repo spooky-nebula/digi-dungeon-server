@@ -10,7 +10,8 @@ export default class Database {
   static init() {
     this.mongo = new MongoAccess(
       process.env.MONGO_HOSTNAME || 'localhost:27017',
-      process.env.MONGO_DATABASE || 'dd-userdata',
+      process.env.MONGO_USER_DATABASE || 'dd-userdata',
+      process.env.MONGO_HOMEBREW_DATABASE || 'dd-homebrewdata',
       process.env.MONGO_USERNAME,
       process.env.MONGO_PASSWORD
     );

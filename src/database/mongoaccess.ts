@@ -6,19 +6,22 @@ export default class MongoAccess {
 
   client?: MongoClient;
   hostname: string;
-  dbName: string;
+  userDBName: string;
+  homebrewDBName: string;
   private url?: string;
   private username?: string | undefined;
   private password?: string | undefined;
 
   constructor(
     hostname: string,
-    dbname: string,
+    userDBName: string,
+    homebrewDBName: string,
     username: string | undefined,
     password: string | undefined
   ) {
     this.hostname = hostname;
-    this.dbName = dbname;
+    this.userDBName = userDBName;
+    this.homebrewDBName = homebrewDBName;
     this.username = username;
     this.password = password;
   }
@@ -47,7 +50,9 @@ export default class MongoAccess {
   }
 
   // Don't forget to close the connection with client.close()
-  connect(): Promise<ConnectionResponse> {
+  connect(
+    dbName: 'userdata' | 'homebrew' = 'userdata'
+  ): Promise<ConnectionResponse> {
     return new Promise((resolve, reject) => {
       if (this.client == undefined) {
         reject();
@@ -58,7 +63,16 @@ export default class MongoAccess {
         .connect()
         .then((client: MongoClient) => {
           this.client = client;
-          const db = client.db(this.dbName);
+          let biConnect: string;
+          switch (dbName) {
+            case 'userdata':
+              biConnect = this.userDBName;
+              break;
+            case 'homebrew':
+              biConnect = this.homebrewDBName;
+              break;
+          }
+          const db = client.db(biConnect);
           resolve({ MongoClient: client, db: db });
         })
         .catch((err) => {

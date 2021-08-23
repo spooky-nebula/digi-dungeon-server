@@ -70,7 +70,6 @@ class DigiDungeonServer {
     //#endregion
 
     //#region Socket IO Stuff
-
     this.io.on('connection', (socket: socketIO.Socket) => {
       socket.on('handshake', (data: ddapi.Auth.Handshake.HandshakeData) => {
         Communications.handshakeHandler(socket, data);
@@ -84,7 +83,6 @@ class DigiDungeonServer {
         Communications.disconnectHandler(socket);
       });
     });
-
     //#endregion
 
     //#region Start and Finish
