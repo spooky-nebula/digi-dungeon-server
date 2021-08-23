@@ -21,7 +21,15 @@ export default class Communications {
     socket: socketIO.Socket,
     data: ddapi.Auth.Handshake.HandshakeData
   ) {
-    // Should add a check for data structure but whatever
+    // Should add a check for data structure but whatever DONE!
+    if (data.shardID.trim() == '') {
+      socket.disconnect();
+      return;
+    }
+    if (data.token.trim() == '') {
+      socket.disconnect();
+      return;
+    }
 
     // Retrieve user
     Database.mongo
