@@ -42,6 +42,7 @@ export default class Authentication {
     const check = Authentication.checkRegisterBody(username, password);
     if (!check.success) {
       res.status(200).json(check);
+      return;
     }
     Database.mongo.userExists(username).then((exists) => {
       if (exists) {
