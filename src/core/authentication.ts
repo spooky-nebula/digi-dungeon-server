@@ -20,10 +20,10 @@ export default class Authentication {
     password: string
   ): AuthResponse {
     if (password.length <= 8) {
-      return { success: false, token: 'Password too short' };
+      return { success: false, message: 'Password too short' };
     }
     if (sanitize(username) != username) {
-      return { success: false, token: 'Username not sanitized' };
+      return { success: false, message: 'Username not sanitized' };
     }
     return { success: true };
   }
@@ -36,7 +36,7 @@ export default class Authentication {
     if (username == '' || password == '') {
       res
         .status(400)
-        .json({ success: false, token: 'No password or username given' });
+        .json({ success: false, message: 'No password or username given' });
       return;
     }
     const check = Authentication.checkRegisterBody(username, password);
@@ -47,7 +47,7 @@ export default class Authentication {
       if (exists) {
         res
           .status(200)
-          .json({ success: false, token: 'Username already exists' });
+          .json({ success: false, message: 'Username already exists' });
       } else {
         let { hashedPassword, salt } = saltPassword(password);
         let userData: UserDataSchema = {
@@ -81,7 +81,7 @@ export default class Authentication {
         } else {
           res.status(200).json({
             success: false,
-            token: 'Check username/password combination'
+            message: 'Check username/password combination'
           });
         }
       });
@@ -89,7 +89,7 @@ export default class Authentication {
 
   static POST_logout(
     req: express.Request,
-    res: express.Response<AuthResponse | any>
+    res: express.Response<AuthResponse>
   ) {
     const { token } = req.body;
     Database.mongo
@@ -102,7 +102,7 @@ export default class Authentication {
       .catch((err) => {
         res.status(403).json({
           success: false,
-          token: 'Token missmatch, error follows:' + err
+          message: 'Token missmatch, error follows:' + err
         });
       });
   }
