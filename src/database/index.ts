@@ -12,6 +12,7 @@ export default class Database {
       process.env.MONGO_HOSTNAME || 'localhost:27017',
       process.env.MONGO_USER_DATABASE || 'dd-userdata',
       process.env.MONGO_HOMEBREW_DATABASE || 'dd-homebrewdata',
+      process.env.MONGO_MAPPINGTOOLS_DATABASE || 'dd-mappingtools',
       process.env.MONGO_USERNAME,
       process.env.MONGO_PASSWORD
     );

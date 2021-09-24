@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./dist/index.js",
     "build": "tsc",
+    "clean": "tsc --clean",
     "watch": "tsc --watch"
   },
   "keywords": [],
@@ -16,7 +17,7 @@
   "repository": "https://github.com/spooky-nebula/digi-dungeon-server",
   "dependencies": {
     "cors": "^2.8.5",
-    "digi-dungeon-api": "^0.1.22",
+    "digi-dungeon-api": "^0.1.23",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongodb": "^4.0.0",
