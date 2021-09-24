@@ -16,7 +16,7 @@
   "repository": "https://github.com/spooky-nebula/digi-dungeon-server",
   "dependencies": {
     "cors": "^2.8.5",
-    "digi-dungeon-api": "^0.1.21",
+    "digi-dungeon-api": "^0.1.22",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongodb": "^4.0.0",
