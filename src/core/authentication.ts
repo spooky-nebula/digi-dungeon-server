@@ -32,9 +32,12 @@ export default class Authentication {
   static encodeResponse(lookupType: string, message: any) {
     // Lookup buffer type
     let responseProto = this.protoRoot.lookupType(lookupType);
+    // Check errors lol
     let err = responseProto.verify(message);
     if (err) console.log('Oh well this got fucked');
+    // Create the message payload
     let payload = responseProto.create(message);
+    // Encode the buffer
     let buffer = responseProto.encode(payload).finish();
     return buffer;
   }
