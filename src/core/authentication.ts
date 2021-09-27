@@ -57,12 +57,12 @@ export default class Authentication {
     if (!check.success) {
       res
         .status(200)
-        .json(ProtoBufEncoder.encodeResponse('AuthResponse', check));
+        .send(ProtoBufEncoder.encodeResponse('AuthResponse', check));
       return;
     }
     Database.mongo.userExists(username).then((exists) => {
       if (exists) {
-        res.status(200).json(
+        res.status(200).send(
           ProtoBufEncoder.encodeResponse('AuthResponse', {
             success: false,
             message: 'Username already exists'
@@ -80,7 +80,7 @@ export default class Authentication {
         Database.mongo.register(userData);
         res
           .status(200)
-          .json(
+          .send(
             ProtoBufEncoder.encodeResponse('AuthResponse', { success: true })
           );
       }
@@ -105,7 +105,7 @@ export default class Authentication {
         // Create a token for the logged in user and save it
         let newToken = random.generateString(64);
         Database.mongo.login(username, newToken).then(() => {
-          res.status(200).json(
+          res.status(200).send(
             ProtoBufEncoder.encodeResponse('AuthResponse', {
               success: true,
               token: newToken
@@ -113,7 +113,7 @@ export default class Authentication {
           );
         });
       } else {
-        res.status(200).json(
+        res.status(200).send(
           ProtoBufEncoder.encodeResponse('AuthResponse', {
             success: false,
             message: 'Check username/password combination'
@@ -137,13 +137,13 @@ export default class Authentication {
         Database.mongo.logout(userData.username).then(() => {
           res
             .status(200)
-            .json(
+            .send(
               ProtoBufEncoder.encodeResponse('AuthResponse', { success: true })
             );
         });
       })
       .catch((err) => {
-        res.status(403).json(
+        res.status(403).send(
           ProtoBufEncoder.encodeResponse('AuthResponse', {
             success: false,
             message: 'Token missmatch, error follows:' + err
