@@ -6,6 +6,7 @@ import cors from 'cors';
 import Database from './database/index';
 
 import dotenv from 'dotenv';
+import ProtoBufEncoder from 'digi-dungeon-protobuf';
 
 import Communications from './core/communications';
 import CDN from './core/cdn';
@@ -35,6 +36,9 @@ class DigiDungeonServer {
     });
 
     this.PORT = process.env.SERVER_PORT || 8080;
+
+    // Encoder for server messages
+    ProtoBufEncoder.init();
 
     Database.init();
     Communications.init(this.io);
