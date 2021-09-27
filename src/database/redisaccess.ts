@@ -149,98 +149,126 @@ export default class RedisAccess {
 
   private setKey(key: string, value: string): Promise<void> {
     return new Promise((resolve) => {
-      this.connect().then((c: RedisClient) => {
-        c.set(key, value, (err, reply) => {
-          resolve();
+      this.connect()
+        .then((c: RedisClient) => {
+          c.set(key, value, (err, reply) => {
+            resolve();
+          });
+          //c.quit();
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        //c.quit();
-      });
     });
   }
 
   private getKey(key: string): Promise<string | null> {
     return new Promise((resolve) => {
-      this.connect().then((c: RedisClient) => {
-        c.get(key, (err, reply) => {
-          resolve(reply);
+      this.connect()
+        .then((c: RedisClient) => {
+          c.get(key, (err, reply) => {
+            resolve(reply);
+          });
+          //c.quit();
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        //c.quit();
-      });
     });
   }
 
   private deleteKey(key: string): Promise<number> {
     return new Promise((resolve) => {
-      this.connect().then((c: RedisClient) => {
-        c.del(key, (err, reply) => {
-          resolve(reply);
+      this.connect()
+        .then((c: RedisClient) => {
+          c.del(key, (err, reply) => {
+            resolve(reply);
+          });
+          //c.quit();
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        //c.quit();
-      });
     });
   }
 
   private markForDeletion(key: string, expire: number): Promise<number> {
     return new Promise((resolve) => {
-      this.connect().then((c: RedisClient) => {
-        c.expire(key, expire, (err, reply) => {
-          resolve(reply);
+      this.connect()
+        .then((c: RedisClient) => {
+          c.expire(key, expire, (err, reply) => {
+            resolve(reply);
+          });
+          //c.quit();
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        //c.quit();
-      });
     });
   }
 
   private unmarkForDeletion(key: string): Promise<number> {
     return new Promise((resolve) => {
-      this.connect().then((c: RedisClient) => {
-        c.persist(key, (err, reply) => {
-          resolve(reply);
+      this.connect()
+        .then((c: RedisClient) => {
+          c.persist(key, (err, reply) => {
+            resolve(reply);
+          });
+          //c.quit();
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        //c.quit();
-      });
     });
   }
 
   private setShardKey(key: string, value: Shard.default): Promise<void> {
     return new Promise((resolve) => {
-      this.connect().then((c: RedisClient) => {
-        // REDIS CONFIG
-        let jsonShardCache = new JSONCache<Shard.default>(c, {
-          prefix: 'shard/'
-        });
-        jsonShardCache
-          .set(key, value)
-          .then((result) => {
-            resolve();
-          })
-          .catch((err) => {
-            console.log('[Redis Access] Error with JSON Cache', err);
-            resolve();
+      this.connect()
+        .then((c: RedisClient) => {
+          // REDIS CONFIG
+          let jsonShardCache = new JSONCache<Shard.default>(c, {
+            prefix: 'shard/'
           });
-        //c.quit();
-      });
+          jsonShardCache
+            .set(key, value)
+            .then((result) => {
+              resolve();
+            })
+            .catch((err) => {
+              console.log('[Redis Access] Error with JSON Cache', err);
+              resolve();
+            });
+          //c.quit();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
   }
 
   private getShardKey(key: string): Promise<Shard.default | undefined | null> {
     return new Promise((resolve) => {
-      this.connect().then((c: RedisClient) => {
-        // REDIS CONFIG
-        let jsonShardCache = new JSONCache<Shard.default>(c, {
-          prefix: 'shard/'
-        });
-        jsonShardCache
-          .get(key)
-          .then((result) => {
-            resolve(result);
-          })
-          .catch((err) => {
-            console.log('[Redis Access] Error with JSON Cache', err);
-            resolve(null);
+      this.connect()
+        .then((c: RedisClient) => {
+          // REDIS CONFIG
+          let jsonShardCache = new JSONCache<Shard.default>(c, {
+            prefix: 'shard/'
           });
-        //c.quit();
-      });
+          jsonShardCache
+            .get(key)
+            .then((result) => {
+              resolve(result);
+            })
+            .catch((err) => {
+              console.log('[Redis Access] Error with JSON Cache', err);
+              resolve(null);
+            });
+          //c.quit();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
   }
 }
