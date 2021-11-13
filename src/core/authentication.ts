@@ -10,10 +10,10 @@ import Database from '../database';
 
 import { UserDataSchema } from '../database/mongoaccess';
 import { saltPassword } from '../util/cryptography';
-import { sanitize } from '../util/stringExtensions';
+import { bufferize, sanitize } from '../util/stringExtensions';
 import { random } from '../util';
 
-import ProtoBufEncoder from 'digi-dungeon-protobuf';
+import ProtoBufCringe from 'digi-dungeon-protobuf';
 
 export default class Authentication {
   static logPrefix: string;
@@ -36,119 +36,175 @@ export default class Authentication {
   }
 
   static POST_register(
-    req: express.Request<{}, {}, Uint8Array>,
+    req: express.Request<{}, {}, { data: Uint8Array }>,
     res: express.Response<Uint8Array>
   ) {
-    const { username, password } =
-      ProtoBufEncoder.decodeResponse<UserRegisterData>(
-        'dd.auth.UserRegisterData',
-        req.body
-      );
-    if (username == '' || password == '') {
-      res.status(400).send(
-        ProtoBufEncoder.encodeResponse('AuthResponse', {
-          success: false,
-          message: 'No password or username given'
-        })
-      );
-      return;
-    }
-    const check = Authentication.checkRegisterBody(username, password);
-    if (!check.success) {
-      res
-        .status(200)
-        .send(ProtoBufEncoder.encodeResponse('AuthResponse', check));
-      return;
-    }
-    Database.mongo.userExists(username).then((exists) => {
-      if (exists) {
-        res.status(200).send(
-          ProtoBufEncoder.encodeResponse('AuthResponse', {
-            success: false,
-            message: 'Username already exists'
-          })
-        );
-      } else {
-        let { hashedPassword, salt } = saltPassword(password);
-        let userData: UserDataSchema = {
-          userId: random.generateString(32),
-          username: username,
-          password: hashedPassword,
-          salt: salt,
-          token: 'photon_cock'
-        };
-        Database.mongo.register(userData);
-        res
-          .status(200)
-          .send(
-            ProtoBufEncoder.encodeResponse('AuthResponse', { success: true })
+    ProtoBufCringe.decode_request_typed<UserRegisterData>(
+      bufferize(req.body.data),
+      'dd.auth.UserRegisterData'
+    )
+      .then((body) => {
+        const { username, password } = body;
+
+        if (username == '' || password == '') {
+          let data = new AuthResponse(
+            false,
+            undefined,
+            'No password or username given'
           );
-      }
-      return;
-    });
-  }
-
-  static POST_login(
-    req: express.Request<{}, {}, Uint8Array>,
-    res: express.Response<Uint8Array>
-  ) {
-    const { username, password } =
-      ProtoBufEncoder.decodeResponse<UserLoginData>(
-        'dd.auth.UserLoginData',
-        req.body
-      );
-
-    // We technically don't need to check if the username exists since
-    // `passwordMatches` resolves false if the user is not found
-    Database.mongo.passwordMatches(username, password).then((matches) => {
-      if (matches) {
-        // Create a token for the logged in user and save it
-        let newToken = random.generateString(64);
-        Database.mongo.login(username, newToken).then(() => {
-          res.status(200).send(
-            ProtoBufEncoder.encodeResponse('AuthResponse', {
-              success: true,
-              token: newToken
-            })
+          ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+            (pack) => {
+              res.status(400).send(pack);
+            }
           );
-        });
-      } else {
-        res.status(200).send(
-          ProtoBufEncoder.encodeResponse('AuthResponse', {
-            success: false,
-            message: 'Check username/password combination'
-          })
-        );
-      }
-    });
-  }
-
-  static POST_logout(
-    req: express.Request<{}, {}, Uint8Array>,
-    res: express.Response<Uint8Array>
-  ) {
-    const { token } = ProtoBufEncoder.decodeResponse(
-      'dd.auth.UserLogoutData',
-      req.body
-    );
-    Database.mongo
-      .getUserFromToken(token)
-      .then((userData) => {
-        Database.mongo.logout(userData.username).then(() => {
-          res
-            .status(200)
-            .send(
-              ProtoBufEncoder.encodeResponse('AuthResponse', { success: true })
+          return;
+        }
+        const check = Authentication.checkRegisterBody(username, password);
+        if (!check.success) {
+          let data = new AuthResponse(check.success, undefined, check.message);
+          ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+            (pack) => {
+              res.status(200).send(pack);
+            }
+          );
+          return;
+        }
+        Database.mongo.userExists(username).then((exists) => {
+          if (exists) {
+            let data = new AuthResponse(
+              false,
+              undefined,
+              'Username already exists'
             );
+            ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+              (pack) => {
+                res.status(200).send(pack);
+              }
+            );
+          } else {
+            let { hashedPassword, salt } = saltPassword(password);
+            let userData: UserDataSchema = {
+              userId: random.generateString(32),
+              username: username,
+              password: hashedPassword,
+              salt: salt,
+              token: 'photon_cock'
+            };
+            Database.mongo.register(userData);
+            let data = new AuthResponse(true, undefined, undefined);
+            ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+              (pack) => {
+                res.status(200).send(pack);
+              }
+            );
+          }
+          return;
         });
       })
       .catch((err) => {
-        res.status(403).send(
-          ProtoBufEncoder.encodeResponse('AuthResponse', {
-            success: false,
-            message: 'Token missmatch, error follows:' + err
-          })
+        let data = new AuthResponse(false, undefined, 'Server Error');
+        ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+          (pack) => {
+            res.status(500).send(pack);
+          }
         );
+        console.log(err);
+      });
+  }
+
+  static POST_login(
+    req: express.Request<{}, {}, { data: Object }>,
+    res: express.Response<Uint8Array>
+  ) {
+    ProtoBufCringe.decode_request_typed<UserLoginData>(
+      bufferize(req.body.data),
+      'dd.auth.UserLoginData'
+    )
+      .then((body) => {
+        const { username, password } = body;
+        // We technically don't need to check if the username exists since
+        // `passwordMatches` resolves false if the user is not found
+        Database.mongo.passwordMatches(username, password).then((matches) => {
+          if (matches) {
+            // Create a token for the logged in user and save it
+            let newToken = random.generateString(64);
+            Database.mongo.login(username, newToken).then(() => {
+              let data = new AuthResponse(true, newToken, undefined);
+              ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+                (pack) => {
+                  res.status(200).send(pack);
+                }
+              );
+            });
+          } else {
+            let data = new AuthResponse(
+              false,
+              undefined,
+              'Check username/password combination'
+            );
+            ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+              (pack) => {
+                res.status(200).send(pack);
+              }
+            );
+          }
+        });
+      })
+      .catch((err) => {
+        let data = new AuthResponse(false, undefined, 'Server Error');
+        ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+          (pack) => {
+            res.status(500).send(pack);
+          }
+        );
+        console.log(err);
+      });
+  }
+
+  static POST_logout(
+    req: express.Request<{}, {}, { data: Uint8Array }>,
+    res: express.Response<Uint8Array>
+  ) {
+    ProtoBufCringe.decode_request_typed<UserLogoutData>(
+      bufferize(req.body.data),
+      'dd.auth.UserLogoutData'
+    )
+      .then((body) => {
+        const { token } = body;
+
+        Database.mongo
+          .getUserFromToken(token)
+          .then((userData) => {
+            Database.mongo.logout(userData.username).then(() => {
+              let data = new AuthResponse(true, undefined, undefined);
+              ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+                (pack) => {
+                  res.status(200).send(pack);
+                }
+              );
+            });
+          })
+          .catch((err) => {
+            let data = new AuthResponse(
+              false,
+              undefined,
+              'Token missmatch, error follows:' + err
+            );
+            ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+              (pack) => {
+                res.status(403).send(pack);
+              }
+            );
+          });
+      })
+      .catch((err) => {
+        let data = new AuthResponse(false, undefined, 'Server Error');
+        ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+          (pack) => {
+            res.status(500).send(pack);
+          }
+        );
+        console.log(err);
       });
   }
 }

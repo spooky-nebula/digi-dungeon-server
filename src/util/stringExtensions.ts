@@ -29,4 +29,17 @@ function getValue(str: string): string {
   return str.substring(str.indexOf(':') + 1);
 }
 
-export { sanitize, diceUp, getValue };
+function bufferize(body: Object) {
+  let key: keyof typeof body;
+  let array_like: number[] = [];
+  for (key in body) {
+    if (typeof body[key] == 'number') {
+      let int: number = body[key] as unknown as number;
+      array_like.push(int);
+    }
+  }
+  let buffer = Uint8Array.from(array_like);
+  return buffer;
+}
+
+export { sanitize, diceUp, getValue, bufferize };

@@ -37,9 +37,6 @@ class DigiDungeonServer {
 
     this.PORT = process.env.SERVER_PORT || 8080;
 
-    // Encoder for server messages
-    ProtoBufEncoder.init();
-
     Database.init();
     Communications.init(this.io);
     Authentication.init();
