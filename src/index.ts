@@ -6,7 +6,7 @@ import cors from 'cors';
 import Database from './database/index';
 
 import dotenv from 'dotenv';
-import ProtoBufEncoder from 'digi-dungeon-protobuf';
+import ProtoBufEncoder, { PackedSocketData } from 'digi-dungeon-protobuf';
 
 import Communications from './core/communications';
 import CDN from './core/cdn';
@@ -76,7 +76,7 @@ class DigiDungeonServer {
         Communications.handshakeHandler(socket, data);
       });
 
-      socket.on('board-event', (eventData: ddapi.Event.default) => {
+      socket.on('board-event', (eventData: PackedSocketData) => {
         Communications.boardEventHandler(socket, eventData);
       });
 

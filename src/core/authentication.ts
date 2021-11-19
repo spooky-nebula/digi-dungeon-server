@@ -13,7 +13,7 @@ import { saltPassword } from '../util/cryptography';
 import { bufferize, sanitize } from '../util/stringExtensions';
 import { random } from '../util';
 
-import ProtoBufCringe from 'digi-dungeon-protobuf';
+import * as proto from 'digi-dungeon-protobuf';
 
 export default class Authentication {
   static logPrefix: string;
@@ -39,7 +39,7 @@ export default class Authentication {
     req: express.Request<{}, {}, { data: Uint8Array }>,
     res: express.Response<Uint8Array>
   ) {
-    ProtoBufCringe.decode_request_typed<UserRegisterData>(
+    proto.ProtoBufCringe.decode_request_typed<UserRegisterData>(
       bufferize(req.body.data),
       'dd.auth.UserRegisterData'
     )
@@ -52,21 +52,23 @@ export default class Authentication {
             undefined,
             'No password or username given'
           );
-          ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
-            (pack) => {
-              res.status(400).send(pack);
-            }
-          );
+          proto.ProtoBufCringe.encode_request(
+            data,
+            'dd.auth.AuthResponse'
+          ).then((pack) => {
+            res.status(400).send(pack);
+          });
           return;
         }
         const check = Authentication.checkRegisterBody(username, password);
         if (!check.success) {
           let data = new AuthResponse(check.success, undefined, check.message);
-          ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
-            (pack) => {
-              res.status(200).send(pack);
-            }
-          );
+          proto.ProtoBufCringe.encode_request(
+            data,
+            'dd.auth.AuthResponse'
+          ).then((pack) => {
+            res.status(200).send(pack);
+          });
           return;
         }
         Database.mongo.userExists(username).then((exists) => {
@@ -76,11 +78,12 @@ export default class Authentication {
               undefined,
               'Username already exists'
             );
-            ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
-              (pack) => {
-                res.status(200).send(pack);
-              }
-            );
+            proto.ProtoBufCringe.encode_request(
+              data,
+              'dd.auth.AuthResponse'
+            ).then((pack) => {
+              res.status(200).send(pack);
+            });
           } else {
             let { hashedPassword, salt } = saltPassword(password);
             let userData: UserDataSchema = {
@@ -92,18 +95,19 @@ export default class Authentication {
             };
             Database.mongo.register(userData);
             let data = new AuthResponse(true, undefined, undefined);
-            ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
-              (pack) => {
-                res.status(200).send(pack);
-              }
-            );
+            proto.ProtoBufCringe.encode_request(
+              data,
+              'dd.auth.AuthResponse'
+            ).then((pack) => {
+              res.status(200).send(pack);
+            });
           }
           return;
         });
       })
       .catch((err) => {
         let data = new AuthResponse(false, undefined, 'Server Error');
-        ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+        proto.ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
           (pack) => {
             res.status(500).send(pack);
           }
@@ -116,7 +120,7 @@ export default class Authentication {
     req: express.Request<{}, {}, { data: Object }>,
     res: express.Response<Uint8Array>
   ) {
-    ProtoBufCringe.decode_request_typed<UserLoginData>(
+    proto.ProtoBufCringe.decode_request_typed<UserLoginData>(
       bufferize(req.body.data),
       'dd.auth.UserLoginData'
     )
@@ -130,11 +134,12 @@ export default class Authentication {
             let newToken = random.generateString(64);
             Database.mongo.login(username, newToken).then(() => {
               let data = new AuthResponse(true, newToken, undefined);
-              ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
-                (pack) => {
-                  res.status(200).send(pack);
-                }
-              );
+              proto.ProtoBufCringe.encode_request(
+                data,
+                'dd.auth.AuthResponse'
+              ).then((pack) => {
+                res.status(200).send(pack);
+              });
             });
           } else {
             let data = new AuthResponse(
@@ -142,17 +147,18 @@ export default class Authentication {
               undefined,
               'Check username/password combination'
             );
-            ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
-              (pack) => {
-                res.status(200).send(pack);
-              }
-            );
+            proto.ProtoBufCringe.encode_request(
+              data,
+              'dd.auth.AuthResponse'
+            ).then((pack) => {
+              res.status(200).send(pack);
+            });
           }
         });
       })
       .catch((err) => {
         let data = new AuthResponse(false, undefined, 'Server Error');
-        ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+        proto.ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
           (pack) => {
             res.status(500).send(pack);
           }
@@ -165,7 +171,7 @@ export default class Authentication {
     req: express.Request<{}, {}, { data: Uint8Array }>,
     res: express.Response<Uint8Array>
   ) {
-    ProtoBufCringe.decode_request_typed<UserLogoutData>(
+    proto.ProtoBufCringe.decode_request_typed<UserLogoutData>(
       bufferize(req.body.data),
       'dd.auth.UserLogoutData'
     )
@@ -177,11 +183,12 @@ export default class Authentication {
           .then((userData) => {
             Database.mongo.logout(userData.username).then(() => {
               let data = new AuthResponse(true, undefined, undefined);
-              ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
-                (pack) => {
-                  res.status(200).send(pack);
-                }
-              );
+              proto.ProtoBufCringe.encode_request(
+                data,
+                'dd.auth.AuthResponse'
+              ).then((pack) => {
+                res.status(200).send(pack);
+              });
             });
           })
           .catch((err) => {
@@ -190,16 +197,17 @@ export default class Authentication {
               undefined,
               'Token missmatch, error follows:' + err
             );
-            ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
-              (pack) => {
-                res.status(403).send(pack);
-              }
-            );
+            proto.ProtoBufCringe.encode_request(
+              data,
+              'dd.auth.AuthResponse'
+            ).then((pack) => {
+              res.status(403).send(pack);
+            });
           });
       })
       .catch((err) => {
         let data = new AuthResponse(false, undefined, 'Server Error');
-        ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
+        proto.ProtoBufCringe.encode_request(data, 'dd.auth.AuthResponse').then(
           (pack) => {
             res.status(500).send(pack);
           }
